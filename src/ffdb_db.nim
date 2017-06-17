@@ -150,11 +150,11 @@ const
 
 type
   ffdb_cursor_t* {.importc: "ffdb_cursor_t", header: "ffdb_db.h".} = object
-    get* {.importc: "get".}: proc (c: ptr _ffdb_cursor_; key: ptr FFDB_DBT;
+    get* {.importc: "get".}: proc (c: ptr ffdb_cursor_t; key: ptr FFDB_DBT;
                                data: ptr FFDB_DBT; flags: cuint): cint ##  Get routine
                                                                  ##  If data is null (0), caller is not interested in data
     ##  Close this cursor
-    close* {.importc: "close".}: proc (c: ptr _ffdb_cursor_): cint ##  type of this cursor
+    close* {.importc: "close".}: proc (c: ptr ffdb_cursor_t): cint ##  type of this cursor
     `type`* {.importc: "type".}: cint ##  internal pointer
     internal* {.importc: "internal".}: pointer
 
@@ -164,17 +164,17 @@ type
 type
   FFDB_DB* {.importc: "FFDB_DB", header: "ffdb_db.h".} = object
     `type`* {.importc: "type".}: FFDB_DBTYPE ##  Underlying db type.
-    close* {.importc: "close".}: proc (a2: ptr __ffdb): cint
-    del* {.importc: "del".}: proc (a2: ptr __ffdb; a3: ptr FFDB_DBT; a4: cuint): cint
-    get* {.importc: "get".}: proc (a2: ptr __ffdb; a3: ptr FFDB_DBT; a4: ptr FFDB_DBT;
+    close* {.importc: "close".}: proc (a2: ptr FFDB_DB): cint
+    del* {.importc: "del".}: proc (a2: ptr FFDB_DB; a3: ptr FFDB_DBT; a4: cuint): cint
+    get* {.importc: "get".}: proc (a2: ptr FFDB_DB; a3: ptr FFDB_DBT; a4: ptr FFDB_DBT;
                                a5: cuint): cint
-    put* {.importc: "put".}: proc (a2: ptr __ffdb; a3: ptr FFDB_DBT; a4: ptr FFDB_DBT;
+    put* {.importc: "put".}: proc (a2: ptr FFDB_DB; a3: ptr FFDB_DBT; a4: ptr FFDB_DBT;
                                a5: cuint): cint
-    sync* {.importc: "sync".}: proc (a2: ptr __ffdb; a3: cuint): cint
-    cursor* {.importc: "cursor".}: proc (a2: ptr __ffdb; a3: ptr ptr ffdb_cursor_t;
+    sync* {.importc: "sync".}: proc (a2: ptr FFDB_DB; a3: cuint): cint
+    cursor* {.importc: "cursor".}: proc (a2: ptr FFDB_DB; a3: ptr ptr ffdb_cursor_t;
                                      `type`: cuint): cint
     internal* {.importc: "internal".}: pointer ##  Access method private.
-    fd* {.importc: "fd".}: proc (a2: ptr __ffdb): cint
+    fd* {.importc: "fd".}: proc (a2: ptr FFDB_DB): cint
 
 
 ## 
@@ -225,18 +225,18 @@ type
 ## 
 
 template M_32_SWAP*(a: untyped): void =
-  var _tmp: cuint
-  (cast[cstring](addr(a)))[0] = (cast[cstring](addr(_tmp)))[3]
-  (cast[cstring](addr(a)))[1] = (cast[cstring](addr(_tmp)))[2]
-  (cast[cstring](addr(a)))[2] = (cast[cstring](addr(_tmp)))[1]
-  (cast[cstring](addr(a)))[3] = (cast[cstring](addr(_tmp)))[0]
+  var ttmp: cuint
+  (cast[cstring](addr(a)))[0] = (cast[cstring](addr(ttmp)))[3]
+  (cast[cstring](addr(a)))[1] = (cast[cstring](addr(ttmp)))[2]
+  (cast[cstring](addr(a)))[2] = (cast[cstring](addr(ttmp)))[1]
+  (cast[cstring](addr(a)))[3] = (cast[cstring](addr(ttmp)))[0]
 
 template P_32_SWAP*(a: untyped): void =
-  var int_tmp: cuint
-  (cast[cstring](a))[0] = (cast[cstring](addr(_tmp)))[3]
-  (cast[cstring](a))[1] = (cast[cstring](addr(_tmp)))[2]
-  (cast[cstring](a))[2] = (cast[cstring](addr(_tmp)))[1]
-  (cast[cstring](a))[3] = (cast[cstring](addr(_tmp)))[0]
+  var ttmp: cuint
+  (cast[cstring](a))[0] = (cast[cstring](addr(ttmp)))[3]
+  (cast[cstring](a))[1] = (cast[cstring](addr(ttmp)))[2]
+  (cast[cstring](a))[2] = (cast[cstring](addr(ttmp)))[1]
+  (cast[cstring](a))[3] = (cast[cstring](addr(ttmp)))[0]
 
 template P_32_COPY*(a, b: untyped): void =
   (cast[cstring](addr((b))))[0] = (cast[cstring](addr((a))))[3]
@@ -252,14 +252,14 @@ template P_32_COPY*(a, b: untyped): void =
 ## 
 
 template M_16_SWAP*(a: untyped): void =
-  var _tmp: cushort
-  (cast[cstring](addr(a)))[0] = (cast[cstring](addr(_tmp)))[1]
-  (cast[cstring](addr(a)))[1] = (cast[cstring](addr(_tmp)))[0]
+  var ttmp: cushort
+  (cast[cstring](addr(a)))[0] = (cast[cstring](addr(ttmp)))[1]
+  (cast[cstring](addr(a)))[1] = (cast[cstring](addr(ttmp)))[0]
 
 template P_16_SWAP*(a: untyped): void =
-  var _tmp: cushort
-  (cast[cstring](a))[0] = (cast[cstring](addr(_tmp)))[1]
-  (cast[cstring](a))[1] = (cast[cstring](addr(_tmp)))[0]
+  var ttmp: cushort
+  (cast[cstring](a))[0] = (cast[cstring](addr(ttmp)))[1]
+  (cast[cstring](a))[1] = (cast[cstring](addr(ttmp)))[0]
 
 template P_16_COPY*(a, b: untyped): void =
   (cast[cstring](addr((b))))[0] = (cast[cstring](addr((a))))[1]
@@ -285,7 +285,7 @@ type
 ## 
 
 const
-  _FFDB_MAX_FNAME* = 128
+  FFDB_MAX_FNAME* = 128
 
 type
   ffdb_config_info_t* {.importc: "ffdb_config_info_t", header: "ffdb_db.h".} = object
@@ -294,7 +294,7 @@ type
     inserted* {.importc: "inserted".}: cint ##  configuration inserted
     `type`* {.importc: "type".}: cint ##  type of configuration (fixed)
     mtime* {.importc: "mtime".}: cint ##  modified time of this config
-    fname* {.importc: "fname".}: array[_FFDB_MAX_FNAME, char]
+    fname* {.importc: "fname".}: array[FFDB_MAX_FNAME, char]
 
 
 ## *
