@@ -133,22 +133,6 @@ proc insert*(filedb: var ConfDataStoreDB; key: K; data: D): cint =
   ##       }
   return ret
 
-proc insertBinary*(filedb: var ConfDataStoreDB; key: string; data: string): cint =
-  ## Insert a pair of data and key into the database in string format
-  ## @param key a key
-  ## @param data a user provided data
-  ##
-  ## @return 0 on successful write, -1 on failure with proper errno set
-  var ret: cint = 0
-  ##       try {
-  ret = insertBinaryData(dbh, key, data)
-  ##       }
-  ##       catch (SerializeException& e) {
-  ## 	std::cerr << "ConfDataStoreDB insert error: " << e.what() << std::endl;
-  ## 	ret = -1;
-  ##       }
-  return ret
-
 proc get*(filedb: var ConfDataStoreDB; key: K; data: var D): cint =
   ## Get data for a given key
   ## @param key user supplied key
@@ -164,14 +148,6 @@ proc get*(filedb: var ConfDataStoreDB; key: K; data: var D): cint =
   ##       }
   return ret
 
-proc getBinary*(filedb: var ConfDataStoreDB; key: string; data: var string): cint =
-  ## Get data for a given key in binary form
-  ##
-  ## @param key user supplied key in string format
-  ## @param data after the call data will be populated
-  ## @return 0 on success, otherwise the key not found
-  return getBinaryData(dbh, key, data)
-
 proc exist*(filedb: var ConfDataStoreDB; key: K): bool =
   ## Does this key exist in the store
   ## @param key a key object
@@ -186,32 +162,19 @@ proc exist*(filedb: var ConfDataStoreDB; key: K): bool =
   ##       }
   return ret
 
-proc keys[K]*(filedb: ConfDataStoreDB) : seq[K] =
+proc keys*[K](filedb: ConfDataStoreDB) : seq[K] =
   ## Return all available keys to user
   ## @param keys user suppled an empty vector which is populated
   ## by keys after this call.
   return allKeys(filedb.dbh, keys)
 
-proc binaryKeys*(filedb: var ConfDataStoreDB; keys: var vector[string]) =
-  ## Return all keys in binary string form
-  ## @param keys user suppled an empty vector which is populated
-  ## by keys after this call.
-  return binaryAllKeys(dbh, keys)
-
-proc keysAndData*(filedb: var ConfDataStoreDB; keys: var vector[K]; values: var vector[D]) =
+proc keysAndData*[K,D](filedb: ConfDataStoreDB): seq[tuple[K,D] =
+  ## ; keys: var vector[K]; values: var vector[D]) =
   ## Return all pairs of keys and data
   ## @param keys user supplied empty vector to hold all keys
   ## @param data user supplied empty vector to hold data
   ## @return keys and data in the vectors having the same size
   return allPairs(dbh, keys, values)
-
-proc binaryKeysAndData*(filedb: var ConfDataStoreDB;
-                        keys: var vector[string]; values: var vector[string]) =
-  ## Return all pairs of keys and data in binary string form
-  ## @param keys user supplied empty vector to hold all keys
-  ## @param data user supplied empty vector to hold data
-  ## @return keys and data in the vectors having the same size     
-  binaryAllPairs(dbh, keys, values)
 
 proc flush*(filedb: var ConfDataStoreDB) =
   ## Flush database in memory to disk
