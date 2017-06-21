@@ -2,7 +2,8 @@
 # Makefile for filehash
 #
 
-CFLAGS  = -I. -D_FILE_OFFSET_BITS=64
+#CFLAGS  = -I. -D_FILE_OFFSET_BITS=64
+CFLAGS  = -I.
 LDFLAGS = libfilehash.a -lpthread
 
 OBJ = ffdb_db.o ffdb_hash.o ffdb_hash_func.o ffdb_page.o ffdb_pagepool.o
