@@ -316,7 +316,7 @@ type
 ##  @return a pointer to FFDB_DB structure. return 0 if something wrong
 ## 
 
-proc ffdb_dbopen*(fname: cstring; flags: cint; mode: cint; openinfo: pointer): ptr FFDB_DB {.
+proc ffdb_dbopen*(fname: cstring; flags: cint; mode: cint; openinfo: ptr FFDB_HASHINFO): ptr FFDB_DB {.
     importc: "ffdb_dbopen", header: "ffdb_db.h".}
 ## *
 ##  Set a paticular configuration information
