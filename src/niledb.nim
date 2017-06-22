@@ -114,12 +114,14 @@ proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: ci
   if filedb.dbh == nil: return -1
   return 0
 
+#[
 proc close*(filedb: var ConfDataStoreDB): cint =
   var ret: cint = 0
   if filedb.dbh != nil:
     ret = filedb.dbh.close(filedb.dbh)
     filedb.dbh = nil
   return ret
+]#
   
 proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): cint =
   ## Insert a pair of data and key into the database
@@ -204,7 +206,7 @@ proc keys*[K](filedb: ConfDataStoreDB): seq[K] =
   ## by keys after this call.
   result = newSeq[K]
   var 
-    dbkey, dbdata: FFDB_DBT
+    dbkey: FFDB_DBT
     crp: ptr ffdb_cursor_t
     arg: K
     
@@ -218,7 +220,7 @@ proc keys*[K](filedb: ConfDataStoreDB): seq[K] =
     dbkey.data = 0
     dbkey.size = 0
 
-    ret = crp.get(crp, addr(dbkey), 0, FFDB_NEXT)
+    ret = crp.get(crp, addr(dbkey), nil, FFDB_NEXT)
     while ret == 0:
       # convert into key object
       let keyObj = string(dbkey.data)
@@ -243,6 +245,55 @@ proc keys*[K](filedb: ConfDataStoreDB): seq[K] =
   # close cursor
   if crp != nil:
     crp.close(crp)
+
+
+
+proc binaryKeys*(filedb: ConfDataStoreDB): seq[string] =
+  ## Return all available keys to user
+  ## @param keys user suppled an empty vector which is populated
+  ## by keys after this call.
+#  var foo = newSeq[string](0)
+  result = newSeq[string](0)
+  var 
+    dbkey: FFDB_DBT
+    crp: ptr ffdb_cursor_t
+    
+  try:
+    # create cursor
+    var ret = filedb.dbh.cursor(filedb.dbh, addr(crp), FFDB_KEY_CURSOR)
+    if ret != 0:
+      quit("DBFunc allKeys: Cannot create cursor")
+
+    # get everything from meta dat
+    dbkey.data = nil
+    dbkey.size = 0
+
+    ret = crp.get(crp, addr(dbkey), nil, FFDB_NEXT)
+    while ret == 0:
+      # convert into key object
+      var keyObj = newString(dbkey.size)
+      copyMem(addr(keyObj[0]), dbkey.data, dbkey.size)
+
+      # put this new key into the vector
+      result.add(keyObj)
+
+      # free memory
+      #####free(dbkey.data)
+
+      # next iteration
+      dbkey.data = nil
+      dbkey.size = 0
+      ret = crp.get(crp, addr(dbkey), nil, FFDB_NEXT)
+
+    if ret != FFDB_NOT_FOUND:
+      quit("DBFunc AllKeys: cursor next error")
+
+  except:
+    quit("Some error in cursor")
+    
+  # close cursor
+  if crp != nil:
+    discard crp.close(crp)
 
 
 
@@ -302,9 +353,11 @@ proc keysAndData*[K,D](filedb: ConfDataStoreDB): seq[tuple[key:K,val:D]] =
     crp.close(crp)
 
 
+#[
 proc flush*(filedb: var ConfDataStoreDB) =
   ## Flush database in memory to disk
   discard filedb.dbh.sync(filedb.dbh, 0)
+]#
 
 
 proc storageName*(filedb: ConfDataStoreDB): string {.noSideEffect.} =
@@ -338,3 +391,29 @@ proc getUserdata*(filedb: ConfDataStoreDB): string =
   return result
 
 
+#-----------------------------------------------------------------------
+when isMainModule:
+  import posix   # get the posix file modes
+
+  # Need to declare something
+  echo "Declare conf db"
+  var db = newConfDataStoreDB()
+
+  # Open a file
+  let file = "prop.sdb"
+  echo "open the db = ", file
+  let ret = db.open(file, O_RDONLY, 0o400)
+  echo "return type= ", ret
+  if ret != 0:
+    quit("strerror= " & $strerror(errno))
+
+  # Try metadata
+  echo "Get metadata"
+  let meta = db.getUserdata()
+  echo "metadata = ", meta
+  
+  # Get more ambitious
+  echo "try getting all the keys"
+  let all_keys = db.binaryKeys()
+  echo "here are all the keys:\n", all_keys
+  

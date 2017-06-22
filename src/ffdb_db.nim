@@ -209,9 +209,11 @@ type
                                                     ## 
     userinfolen* {.importc: "userinfolen".}: cuint ##  how many bytes for user information
     numconfigs* {.importc: "numconfigs".}: cuint ##  number of configurations
-    hash* {.importc: "hash".}: proc (a2: pointer; a3: cuint): cuint ##  hash function
+#    hash* {.importc: "hash".}: proc (a2: pointer; a3: cuint): cuint ##  hash function
+    hash* {.importc: "hash".}: pointer ##  hash function
                                                            ##  key compare func
-    cmp* {.importc: "cmp".}: proc (a2: ptr FFDB_DBT; a3: ptr FFDB_DBT): cint
+#    cmp* {.importc: "cmp".}: proc (a2: ptr FFDB_DBT; a3: ptr FFDB_DBT): cint
+    cmp* {.importc: "cmp".}: pointer
 
 
 ## 
