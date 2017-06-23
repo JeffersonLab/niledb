@@ -2358,7 +2358,7 @@ ffdb_reduce_filesize (ffdb_htab_t* hashp)
     length = (off_t)hashp->hdr.bsize * (last + 1);
 
     if (ftruncate (hashp->fp, length) != 0) {
-      fprintf (stderr, "Cannot truncate database %s to length %ld\n",
+      fprintf (stderr, "Cannot truncate database %s to length %lld\n",
 	       hashp->fname, length);
     }
   }
