@@ -3,24 +3,38 @@
 
 import 
   serializetools/serializebin, serializetools/crc32,
-  ffdb_db, system
+  ffdb_header, system,
+  strutils
 
 
 const
   FILEDB_DEFAULT_PAGESIZE = 8192
   FILEDB_DEFAULT_NUM_BUCKETS = 32
 
+# Deal with C-based arrays
+#type
+#  cArray{.unchecked.}[T] = array[0,T]
+#
+#template `[]`(x: cArray): untyped = addr x[0]
+#template `&`(x: ptr cArray): untyped = addr x[0]
 
+template asarray*[T](p:pointer):auto =
+  ## Convert pointers to C-style arrays of types.
+  type A{.unchecked.} = array[0..0,T]
+  cast[ptr A](p)
+
+
+## Main type
 type
   ConfDataStoreDB* = object
     filename:  string           ## database name
-    options:   FFDB_HASHINFO    ## all open options
-    dbh:       ptr FFDB_DB      ## opened database handle
+    options:   FILEDB_OPENINFO  ## all open options
+    dbh:       ptr FILEDB_DB    ## opened database handle
 
 
 proc newConfDataStoreDB*(): ConfDataStoreDB =
   ## Empty constructor for a data store for one configuration
-  zeroMem(addr(result.options), sizeof((FFDB_HASHINFO)))
+  zeroMem(addr(result.options), sizeof((FILEDB_OPENINFO)))
   result.options.bsize = FILEDB_DEFAULT_PAGESIZE
   result.options.nbuckets = FILEDB_DEFAULT_NUM_BUCKETS
   #  the other elements will be arranged by file hash package
@@ -91,7 +105,7 @@ proc setMaxUserInfoLen*(filedb: var ConfDataStoreDB; len: cuint) =
   
 proc getMaxUserInfoLen*(filedb: ConfDataStoreDB): cuint {.noSideEffect.} =
   if filedb.dbh == nil: return filedb.options.userinfolen
-  return ffdb_max_user_info_len(filedb.dbh)
+  return filedb_max_user_info_len(filedb.dbh)
 
 proc setMaxNumberConfigs*(filedb: var ConfDataStoreDB; num: cuint) =
   ## Set and get maximum number of configurations
@@ -99,7 +113,7 @@ proc setMaxNumberConfigs*(filedb: var ConfDataStoreDB; num: cuint) =
 
 proc getMaxNumberConfigs*(filedb: ConfDataStoreDB): cuint {.noSideEffect.} =
   if filedb.dbh == nil: return filedb.options.numconfigs
-  return ffdb_num_configs(filedb.dbh)
+  return filedb_num_configs(filedb.dbh)
 
 proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: cint): cint =
   ## Open
@@ -109,8 +123,9 @@ proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: ci
   ##
   ## @return 0 on success, -1 on failure with proper errno set
   var foo: cstring = file
-#  filedb.dbh = ffdb_dbopen(addr(foo), open_flags, mode, addr(filedb.options))
-  filedb.dbh = ffdb_dbopen(foo, open_flags, mode, addr(filedb.options))
+  echo "open: here are options:\n", filedb.options
+#  filedb.dbh = filedb_dbopen(addr(foo), open_flags, mode, addr(filedb.options))
+  filedb.dbh = filedb_dbopen(foo, open_flags, mode, addr(filedb.options))
   if filedb.dbh == nil: return -1
   return 0
 
@@ -133,13 +148,13 @@ proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): cint =
   let keyObj: cstring = serializeBinary(key);
 
   # create key
-  let dbkey = FFDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
+  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
           
   # Convert data into binary form
   let dataObj = serializeBinary(data)
 
   # create DBt object
-  let dbdata = FFDB_DBT(data: addr(dataObj), size: dataObj.size)
+  let dbdata = FILEDB_DBT(data: addr(dataObj), size: dataObj.size)
 
   # now it is time to insert
   let ret: cint = filedb.dbh.put(filedb.dbh, addr(dbkey), addr(dbdata), 0)
@@ -154,10 +169,10 @@ proc get*[K,D](filedb: var ConfDataStoreDB; key: K; data: var D): cint =
   let keyObj: cstring = serializeBinary(key);
 
   # create key
-  let dbkey = FFDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
+  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
           
   # create and empty dbt data object
-  var dbdata: FFDB_DBT
+  var dbdata: FILEDB_DBT
   dbdata.data = 0
   dbdata.size = 0
 
@@ -184,10 +199,10 @@ proc exist*[K](filedb: var ConfDataStoreDB; key: K): bool =
   let keyObj: cstring = serializeBinary(key)
 
   # create key
-  let dbkey = FFDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
+  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
           
   # create and empty dbt data object
-  var dbdata: FFDB_DBT
+  var dbdata: FILEDB_DBT
   dbdata.data = 0
   dbdata.size = 0
 
@@ -200,157 +215,125 @@ proc exist*[K](filedb: var ConfDataStoreDB; key: K): bool =
     result = false
 
 
+proc keysBinary*(filedb: ConfDataStoreDB): seq[string] =
+  ## Return all available keys to user
+  ## @param keys user suppled an empty vector which is populated
+  ## by keys after this call.
+
+  var 
+    #foobar: array[0..ArrayDummySize, cstring]
+    #dbkeys: ptr FILEDB_DBT
+    dbkeys: pointer
+    num0:   cuint
+    
+  # Grab all keys in string form
+  echo "call filedb_get_all"
+  filedb_get_all_keys(filedb.dbh, addr(dbkeys), addr(num0))
+  let num = int(num0)
+  echo "keys: num keys= ", num
+
+  # Hold the result
+  newSeq[string](result, num)
+
+  # Keys
+  # let keys = cast[array[0,FILEDB_DBT]](dbkeys)
+
+  echo "try asarray"
+  #  let foo = dbkeys[]
+  let foo = asarray[FILEDB_DBT](dbkeys)[0]
+  echo "foo.sz= ", $foo.size
+
+  
+  # Loop over all the keys and deserialize them
+  for i in 0..num-1:
+    # convert into key object
+    var sz:int = int(asarray[FILEDB_DBT](dbkeys)[i].size)
+    var keyObj = newString(sz)
+    copyMem(addr(keyObj[0]), asarray[FILEDB_DBT](dbkeys)[i].data, sz)
+
+    # put this new key into the vector
+    result[i] = $asarray[FILEDB_DBT](dbkeys)[i]
+    if i == 0:
+      echo "keysBinary: i= ", i, "  sz= ", sz,  "  result.len= ", result[i].len, " res= ", printBin(result[i])
+    
+    # free memory
+    #echo "i= ", i, "  sz= ", sz
+    #dealloc(asarray[FILEDB_DBT](dbkeys)[i].data)
+
+  # Cleanup
+  echo "free"
+  dealloc(dbkeys)
+
+
+
 proc keys*[K](filedb: ConfDataStoreDB): seq[K] =
   ## Return all available keys to user
   ## @param keys user suppled an empty vector which is populated
   ## by keys after this call.
-  result = newSeq[K]
+  newSeq[K](result)
+
   var 
-    dbkey: FFDB_DBT
-    crp: ptr ffdb_cursor_t
-    arg: K
+    dbkeys: ptr FILEDB_DBT
+    num:    cuint
     
-  try:
-    # create cursor
-    var ret = filedb.dbh.cursor(filedb.dbh, addr(crp), FFDB_KEY_CURSOR)
-    if ret != 0:
-      quit("DBFunc allKeys: Cannot create cursor")
+  # Grab all keys in string form
+  filedb_get_all_keys(filedb.dbh, dbkeys, addr(num))
+  echo "keys: num keys= ", num
 
-    # get everything from meta dat
-    dbkey.data = 0
-    dbkey.size = 0
+  # Loop over all the keys and deserialize them
+  for i in 1..num:
+    # convert into key object
+    var keyObj = newString(dbkeys[i].size)
+    copyMem(addr(keyObj[0]), dbkeys[i].data, dbkeys[i].size)
 
-    ret = crp.get(crp, addr(dbkey), nil, FFDB_NEXT)
-    while ret == 0:
-      # convert into key object
-      let keyObj = string(dbkey.data)
+    # put this new key into the vector
+    result.push_back(deserializeBinary[K](keyObj))
 
-      # put this new key into the vector
-      result.push_back(deserializeBinary[K](keyObj))
+    # free memory
+    dealloc(dbkeys[i].data)
 
-      # free memory
-      #####free(dbkey.data)
-
-      # next iteration
-      dbkey.data = 0
-      dbkey.size = 0
-      ret = crp.get(crp, addr(dbkey), 0, FFDB_NEXT)
-
-    if ret != FFDB_NOT_FOUND:
-      quit("DBFunc AllKeys: cursor next error")
-
-  except:
-    quit("Some error in cursor")
-    
-  # close cursor
-  if crp != nil:
-    crp.close(crp)
-
-
-
-proc binaryKeys*(filedb: ConfDataStoreDB): seq[string] =
-  ## Return all available keys to user
-  ## @param keys user suppled an empty vector which is populated
-  ## by keys after this call.
-#  var foo = newSeq[string](0)
-  result = newSeq[string](0)
-  var 
-    dbkey: FFDB_DBT
-    crp: ptr ffdb_cursor_t
-    
-  try:
-    # create cursor
-    var ret = filedb.dbh.cursor(filedb.dbh, addr(crp), FFDB_KEY_CURSOR)
-    if ret != 0:
-      quit("DBFunc allKeys: Cannot create cursor")
-
-    # get everything from meta dat
-    dbkey.data = nil
-    dbkey.size = 0
-
-    ret = crp.get(crp, addr(dbkey), nil, FFDB_NEXT)
-    while ret == 0:
-      # convert into key object
-      var keyObj = newString(dbkey.size)
-      copyMem(addr(keyObj[0]), dbkey.data, dbkey.size)
-
-      # put this new key into the vector
-      result.add(keyObj)
-
-      # free memory
-      #####free(dbkey.data)
-
-      # next iteration
-      dbkey.data = nil
-      dbkey.size = 0
-      ret = crp.get(crp, addr(dbkey), nil, FFDB_NEXT)
-
-    if ret != FFDB_NOT_FOUND:
-      quit("DBFunc AllKeys: cursor next error")
-
-  except:
-    quit("Some error in cursor")
-    
-  # close cursor
-  if crp != nil:
-    discard crp.close(crp)
+  # Cleanup
+  dealloc(dbkeys)
 
 
 
 proc keysAndData*[K,D](filedb: ConfDataStoreDB): seq[tuple[key:K,val:D]] =
-  ## keys: var vector[K]; values: var vector[D]) =
+  ## keys: var >vector[K]; values: var vector[D]) =
   ## Return all pairs of keys and data
   ## @param keys user supplied empty vector to hold all keys
   ## @param data user supplied empty vector to hold data
   ## @return keys and data in the vectors having the same size
-  result = newSeq[tuple[key:K,val:D]]
+
+  newSeq[tuple[key:K,val:D]](result)
   var 
-    dbkey, dbdata: FFDB_DBT
-    crp: ptr ffdb_cursor_t
-    arg: K
+    dbkeys: ptr FILEDB_DBT
+    dbvals: ptr FILEDB_DBT
+    num:    cuint
     
-  try:
-    # create cursor
-    var ret = filedb.dbh.cursor(filedb.dbh, addr(crp), FFDB_KEY_CURSOR)
-    if ret != 0:
-      quit("DBFunc allKeys: Cannot create cursor")
+  # Grab all keys in string form
+  filedb_get_all_pairs(filedb.dbh, dbkeys, dbvals, addr(num))
+  echo "keys: num key/vals= ", num
 
-    # get everything from meta dat
-    dbkey.data = 0
-    dbkey.size = 0
-    dbdata.data = 0
-    dbdata.size = 0
+  # Loop over all the keys and deserialize them
+  for i in 1..num:
+    # convert into key object
+    var keyObj  = newString(dbkeys[i].size)
+    copyMem(addr(keyObj[0]), dbkeys[i].data, dbkeys[i].size)
+    let k = deserializeBinary[K](keyObj)
 
-    ret = crp.get(crp, addr(dbkey), addr(dbdata), FFDB_NEXT)
-    while ret == 0:
-      # convert into key object
-      let keyObj = string(dbkey.data)
-      let key = deserializeBinary[K](keyObj)
+    var valObj = newString(dbvals[i].size)
+    copyMem(addr(valObj[0]), dbvals[i].data, dbvals[i].size)
+    let v = deserializeBinary[D](valObj)
 
-      # convert into data object
-      let dataObj = string(dbdata.data)
-      let val = deserializeBinary[D](dataObj)
+    # put this new key into the vector
+    result.push_back(k, v)
 
-      # push back
-      result.push_back(key, val)
+    # free memory
+    dealloc(dbkeys[i].data)
 
-      # free memory
-      #####free(dbkey.data)
-      #####free(dbdata.data)
-
-      # next iteration
-      dbkey.data = 0
-      dbkey.size = 0
-      ret = crp.get(crp, addr(dbkey), addr(dbdata), FFDB_NEXT)
-
-    if ret != FFDB_NOT_FOUND:
-      quit("DBFunc AllKeys: cursor next error")
-  except:
-    quit("Some error in cursor")
-    
-  # close cursor
-  if crp != nil:
-    crp.close(crp)
+  # Cleanup
+  dealloc(dbkeys)
+  dealloc(dbvals)
 
 
 #[
@@ -373,8 +356,8 @@ proc insertUserdata*(filedb: var ConfDataStoreDB; user_data: string): cint =
   ## @param user_data user supplied data
   ## @return returns 0 if success, else failure
   #  var foo = cstring(user_data)
-  #  return ffdb_set_user_info(filedb.dbh, addr(foo), foo.len)
-  return ffdb_set_user_info(filedb.dbh, cast[ptr cuchar](user_data[0]),
+  #  return filedb_set_user_info(filedb.dbh, addr(foo), foo.len)
+  return filedb_set_user_info(filedb.dbh, cast[ptr cuchar](user_data[0]),
                             cuint(user_data.len))
 
 
@@ -383,9 +366,11 @@ proc getUserdata*(filedb: ConfDataStoreDB): string =
   ##
   ## @param user_data user supplied buffer to store user data
   ## @return returns user supplied buffer if success. Otherwise failure. 
-  var len: cuint = ffdb_max_user_info_len(filedb.dbh)
+  var len: cuint = filedb_max_user_info_len(filedb.dbh)
+  echo "getUserdata: len= ", len
   result = newString(len+1)
-  var ret = ffdb_get_user_info(filedb.dbh, addr(result[0]), addr(len))
+  var ret = filedb_get_user_info(filedb.dbh, addr(result[0]), addr(len))
+  echo "ret= ", ret
   if ret != 0:
     quit("Error returning user meta-data from db")
   return result
@@ -393,7 +378,7 @@ proc getUserdata*(filedb: ConfDataStoreDB): string =
 
 #-----------------------------------------------------------------------
 when isMainModule:
-  import posix   # get the posix file modes
+  import strutils, posix, os   # get the posix file modes
 
   # Need to declare something
   echo "Declare conf db"
@@ -401,6 +386,12 @@ when isMainModule:
 
   # Open a file
   let file = "prop.sdb"
+  echo "Is file= ", file, "  present?"
+  if fileExists(file):
+    echo "hooray, it exists"
+  else:
+    quit("oops, does not exist")
+
   echo "open the db = ", file
   let ret = db.open(file, O_RDONLY, 0o400)
   echo "return type= ", ret
@@ -410,10 +401,25 @@ when isMainModule:
   # Try metadata
   echo "Get metadata"
   let meta = db.getUserdata()
-  echo "metadata = ", meta
+  #  echo "metadata = ", meta
+  echo "it did not blowup..."
   
-  # Get more ambitious
-  echo "try getting all the keys"
-  let all_keys = db.binaryKeys()
-  echo "here are all the keys:\n", all_keys
-  
+  # Read all the keys
+  echo "try getting all the binary keys"
+  let all_keys = db.keysBinary()
+  echo "found num keys= ", all_keys.len
+  echo "here is the first key: len= ", all_keys[0].len, "  val= ", printBin(all_keys[0])
+
+  # Get braver, attempt to deserialize
+  type
+    KeyPropElementalOperator_t = object
+      t_slice:    cint     ## Propagator time slice
+      t_source:   cint     ## Source time slice
+      spin_l:     cint     ## Sink spin index
+      spin_r:     cint     ## spin index
+      mass_label: cstring  ## A mass label
+
+  # Deserialize the first key
+  echo "Deserialize..."
+  let foo = deserializeBinary[KeyPropElementalOperator_t](all_keys[0])
+  echo "here it is:\n", foo

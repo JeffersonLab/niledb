@@ -211,9 +211,11 @@ typedef struct {
 				  */
   unsigned int   userinfolen;    /* how many bytes for user information */
   unsigned int   numconfigs;     /* number of configurations */
+#if 0
   unsigned int  (*hash) (const void *, unsigned int); /* hash function */
                                 /* key compare func */
   int           (*cmp) (const FFDB_DBT *, const FFDB_DBT *); 
+#endif
 } FFDB_HASHINFO;
 
 

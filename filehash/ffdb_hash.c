@@ -392,10 +392,12 @@ _ffdb_init_hash(ffdb_htab_t* hashp, const char* file,
     /* Set rearrange page flag */
     hashp->rearrange_pages = info->rearrangepages;
     
+#if 0
     if (info->hash)
       hashp->hash = info->hash;
     if (info->cmp)
       hashp->h_compare = info->cmp;
+#endif
   }
 
   return 0;
@@ -711,6 +713,7 @@ __ffdb_hash_open (const char* fname, int flags, int mode, const void* arg)
   } 
   else {
     /* Table already exists */
+#if 0
     if (info && info->hash)
       hashp->hash = info->hash;
     else
@@ -720,6 +723,10 @@ __ffdb_hash_open (const char* fname, int flags, int mode, const void* arg)
       hashp->h_compare = info->cmp;
     else
       hashp->h_compare = __ffdb_default_cmp;
+#else
+    hashp->hash = __ffdb_default_hash;
+    hashp->h_compare = __ffdb_default_cmp;
+#endif
 
     if (info)
       hashp->rearrange_pages = info->rearrangepages;
