@@ -77,6 +77,14 @@ extern FILEDB_DB*
 filedb_dbopen(const char* fname, int flags, int mode, const void* openinfo);
 
 
+/*
+ * Close a database handle
+ * @param dbh database
+ */
+extern int
+filedb_close(FILEDB_DB* dbh);
+
+
 /**
  * Set a paticular configuration information
  * 

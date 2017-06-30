@@ -54,6 +54,23 @@ filedb_dbopen(const char* fname, int flags, int mode, const void* openinfo)
 
 
 /*
+ * Close a database handle
+ */
+int
+filedb_close(FILEDB_DB* dbhh)
+{
+  FFDB_DB* dbh = (FFDB_DB*)dbhh;
+  int ret = 0;
+  if (dbh != NULL)
+  {
+    ret = dbh->close(dbh);
+    dbh = 0;
+  }
+  return ret;
+}
+
+
+/*
  * Set user information for the database
  */
 unsigned int

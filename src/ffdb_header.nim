@@ -30,26 +30,20 @@
 ## 
 ## 
 
-import strutils
-
 ## 
 ##  Still use the key data pair structure
 ## 
+
 type
   FILEDB_DBT* {.importc: "FILEDB_DBT", header: "ffdb_header.h".} = object
     data* {.importc: "data".}: pointer ##  data
     size* {.importc: "size".}: cuint ##  data length in bytes
   
 
-# String conversion
-proc `$`*(a: FILEDB_DBT): string =
-  ## Convert a stupid C-based string `a` of length `size` into a proper string
-  result = newString(a.size)
-  let sz = int(a.size)
-  copyMem(addr(result[0]), a.data, sz)
-  #echo "str= ", toHex[string](result)
+##  Access method description structure.
 
-
+type
+  FILEDB_DB* = pointer
 
 ## 
 ##  Structure used to pass parameters to the hashing routines. 
@@ -65,12 +59,7 @@ type
                                                     ## 
     userinfolen* {.importc: "userinfolen".}: cuint ##  how many bytes for user information
     numconfigs* {.importc: "numconfigs".}: cuint ##  number of configurations
-
-
-##  Access method description structure.
-
-type
-  FILEDB_DB* = pointer
+  
 
 ## 
 ##  Open a database handle
@@ -80,9 +69,16 @@ type
 ##  @openinfo user supplied information for opening a database
 ##  @return a pointer to FILEDB_DB structure. return 0 if something wrong
 ## 
+
 proc filedb_dbopen*(fname: cstring; flags: cint; mode: cint; openinfo: pointer): ptr FILEDB_DB {.
     importc: "filedb_dbopen", header: "ffdb_header.h".}
+## 
+##  Close a database handle
+##  @param dbh database
+## 
 
+proc filedb_close*(dbh: ptr FILEDB_DB): cint {.importc: "filedb_close",
+    header: "ffdb_header.h".}
 ## *
 ##  Set a paticular configuration information
 ##  
@@ -141,9 +137,9 @@ proc filedb_dbopen*(fname: cstring; flags: cint; mode: cint; openinfo: pointer):
 ## 
 ##  @return number of configurations allocated
 ## 
+
 proc filedb_num_configs*(db: ptr FILEDB_DB): cuint {.importc: "filedb_num_configs",
     header: "ffdb_header.h".}
-
 ## *
 ##  Set user information for the database
 ## 
@@ -153,9 +149,9 @@ proc filedb_num_configs*(db: ptr FILEDB_DB): cuint {.importc: "filedb_num_config
 ## 
 ##  @return 0 on success. -1 on failure with a proper errno
 ## 
+
 proc filedb_set_user_info*(db: ptr FILEDB_DB; data: ptr cuchar; len: cuint): cint {.
     importc: "filedb_set_user_info", header: "ffdb_header.h".}
-
 ## *
 ##  Get user information for the database
 ## 
@@ -168,33 +164,34 @@ proc filedb_set_user_info*(db: ptr FILEDB_DB; data: ptr cuchar; len: cuint): cin
 ##  @return 0 on success. -1 on failure with a proper errno
 ##  
 ## 
+
 proc filedb_get_user_info*(db: ptr FILEDB_DB; data: ptr cuchar; len: ptr cuint): cint {.
     importc: "filedb_get_user_info", header: "ffdb_header.h".}
-
 ## *
 ##  Get maximum user information length in bytes allocated
 ## 
 ##  @param db pointer to underlying database
 ##  @return number of bytes allocated for user information
 ## 
+
 proc filedb_max_user_info_len*(db: ptr FILEDB_DB): cuint {.
     importc: "filedb_max_user_info_len", header: "ffdb_header.h".}
-
 ## 
 ##  A routine which reset the database handle under panic mode
 ## 
+
 proc filedb_dbpanic*(dbp: ptr FILEDB_DB) {.importc: "filedb_dbpanic",
                                        header: "ffdb_header.h".}
-
 ## *
 ##  Return all keys to vectors in binary form of strings
 ## 
+
 proc filedb_get_all_keys*(dbhh: ptr FILEDB_DB; keyss: pointer; num: ptr cuint) {.
     importc: "filedb_get_all_keys", header: "ffdb_header.h".}
-
 ## *
 ##  Return all keys & data to vectors in binary form of strings
 ## 
+
 proc filedb_get_all_pairs*(dbhh: ptr FILEDB_DB; keyss: ptr FILEDB_DBT;
                           valss: ptr FILEDB_DBT; num: ptr cuint) {.
     importc: "filedb_get_all_pairs", header: "ffdb_header.h".}

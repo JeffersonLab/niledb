@@ -24,6 +24,21 @@ template asarray*[T](p:pointer):auto =
   cast[ptr A](p)
 
 
+# String conversion
+proc `$`*(a: FILEDB_DBT): string =
+  ## Convert a stupid C-based string `a` of length `size` into a proper string
+  result = newString(a.size)
+  let sz = int(a.size)
+  copyMem(addr(result[0]), a.data, sz)
+
+
+proc printBin(x:string): string =
+  ## Print a binary string
+  result = "0x"
+  for e in items(x):
+    result.add(toHex(e))
+
+
 ## Main type
 type
   ConfDataStoreDB* = object
@@ -124,19 +139,13 @@ proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: ci
   ## @return 0 on success, -1 on failure with proper errno set
   var foo: cstring = file
   echo "open: here are options:\n", filedb.options
-#  filedb.dbh = filedb_dbopen(addr(foo), open_flags, mode, addr(filedb.options))
   filedb.dbh = filedb_dbopen(foo, open_flags, mode, addr(filedb.options))
   if filedb.dbh == nil: return -1
   return 0
 
-#[
 proc close*(filedb: var ConfDataStoreDB): cint =
-  var ret: cint = 0
-  if filedb.dbh != nil:
-    ret = filedb.dbh.close(filedb.dbh)
-    filedb.dbh = nil
-  return ret
-]#
+  ## Close a database<
+  return filedb_close(filedb.dbh)
   
 proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): cint =
   ## Insert a pair of data and key into the database
@@ -215,7 +224,7 @@ proc exist*[K](filedb: var ConfDataStoreDB; key: K): bool =
     result = false
 
 
-proc keysBinary*(filedb: ConfDataStoreDB): seq[string] =
+proc binaryKeys*(filedb: ConfDataStoreDB): seq[string] =
   ## Return all available keys to user
   ## @param keys user suppled an empty vector which is populated
   ## by keys after this call.
@@ -226,6 +235,9 @@ proc keysBinary*(filedb: ConfDataStoreDB): seq[string] =
     dbkeys: pointer
     num0:   cuint
     
+  proc cfree(p: pointer): void {.importc: "free", header: "stdlib.h".}
+
+
   # Grab all keys in string form
   echo "call filedb_get_all"
   filedb_get_all_keys(filedb.dbh, addr(dbkeys), addr(num0))
@@ -234,9 +246,6 @@ proc keysBinary*(filedb: ConfDataStoreDB): seq[string] =
 
   # Hold the result
   newSeq[string](result, num)
-
-  # Keys
-  # let keys = cast[array[0,FILEDB_DBT]](dbkeys)
 
   echo "try asarray"
   #  let foo = dbkeys[]
@@ -254,15 +263,15 @@ proc keysBinary*(filedb: ConfDataStoreDB): seq[string] =
     # put this new key into the vector
     result[i] = $asarray[FILEDB_DBT](dbkeys)[i]
     if i == 0:
-      echo "keysBinary: i= ", i, "  sz= ", sz,  "  result.len= ", result[i].len, " res= ", printBin(result[i])
+      echo "binaryKeys: i= ", i, "  sz= ", sz,  "  result.len= ", result[i].len, " res= ", printBin(result[i])
     
     # free memory
     #echo "i= ", i, "  sz= ", sz
-    #dealloc(asarray[FILEDB_DBT](dbkeys)[i].data)
+    cfree(asarray[FILEDB_DBT](dbkeys)[i].data)
 
   # Cleanup
   echo "free"
-  dealloc(dbkeys)
+  cfree(dbkeys)
 
 
 
@@ -270,30 +279,18 @@ proc keys*[K](filedb: ConfDataStoreDB): seq[K] =
   ## Return all available keys to user
   ## @param keys user suppled an empty vector which is populated
   ## by keys after this call.
-  newSeq[K](result)
+  # Grab all the binary keys
+  let all_keys = binaryKeys(filedb)
 
-  var 
-    dbkeys: ptr FILEDB_DBT
-    num:    cuint
-    
-  # Grab all keys in string form
-  filedb_get_all_keys(filedb.dbh, dbkeys, addr(num))
-  echo "keys: num keys= ", num
+  # Hold the result
+  newSeq[K](result, all_keys.len)
 
   # Loop over all the keys and deserialize them
-  for i in 1..num:
+  for i in 0..all_keys.len-1:
     # convert into key object
-    var keyObj = newString(dbkeys[i].size)
-    copyMem(addr(keyObj[0]), dbkeys[i].data, dbkeys[i].size)
-
-    # put this new key into the vector
-    result.push_back(deserializeBinary[K](keyObj))
-
-    # free memory
-    dealloc(dbkeys[i].data)
-
-  # Cleanup
-  dealloc(dbkeys)
+    #if (i == 0) or (i > 690 and i < 1000):
+    #  echo "i= ", i, "  key= ", printBin(all_keys[i])
+    result[i] = deserializeBinary[K](all_keys[i])
 
 
 
@@ -380,6 +377,15 @@ proc getUserdata*(filedb: ConfDataStoreDB): string =
 when isMainModule:
   import strutils, posix, os   # get the posix file modes
 
+  # Key type used for tests
+  type
+    KeyPropElementalOperator_t = object
+      t_slice:    cint     ## Propagator time slice
+      t_source:   cint     ## Source time slice
+      spin_l:     cint     ## Sink spin index
+      spin_r:     cint     ## spin index
+      mass_label: cstring  ## A mass label
+
   # Need to declare something
   echo "Declare conf db"
   var db = newConfDataStoreDB()
@@ -393,7 +399,7 @@ when isMainModule:
     quit("oops, does not exist")
 
   echo "open the db = ", file
-  let ret = db.open(file, O_RDONLY, 0o400)
+  var ret = db.open(file, O_RDONLY, 0o400)
   echo "return type= ", ret
   if ret != 0:
     quit("strerror= " & $strerror(errno))
@@ -404,22 +410,56 @@ when isMainModule:
   #  echo "metadata = ", meta
   echo "it did not blowup..."
   
+  # Tests
+  if true:
+    # Read all the keys
+    echo "try getting all the binary keys"
+    let all_keys = db.binaryKeys()
+    echo "found num keys= ", all_keys.len
+    echo "here is the first key: len= ", all_keys[0].len, "  val= ", printBin(all_keys[0])
+
+    # Deserialize the first key
+    echo "Deserialize..."
+    let foo = deserializeBinary[KeyPropElementalOperator_t](all_keys[0])
+    echo "here it is:\n", foo
+
   # Read all the keys
-  echo "try getting all the binary keys"
-  let all_keys = db.keysBinary()
-  echo "found num keys= ", all_keys.len
-  echo "here is the first key: len= ", all_keys[0].len, "  val= ", printBin(all_keys[0])
+  if true:
+    echo "try getting all the deserialized keys"
+    let des_keys = keys[KeyPropElementalOperator_t](db)
+    echo "found num keys= ", des_keys.len
+    echo "here is the first key: len= ", des_keys.len, "  val= ", des_keys[0]
 
-  # Get braver, attempt to deserialize
-  type
-    KeyPropElementalOperator_t = object
-      t_slice:    cint     ## Propagator time slice
-      t_source:   cint     ## Source time slice
-      spin_l:     cint     ## Sink spin index
-      spin_r:     cint     ## spin index
-      mass_label: cstring  ## A mass label
+  # Close
+  if (db.close() != 0):
+    quit("Some strange error closing db")
 
-  # Deserialize the first key
-  echo "Deserialize..."
-  let foo = deserializeBinary[KeyPropElementalOperator_t](all_keys[0])
-  echo "here it is:\n", foo
+  # Let us write a file
+  let out_file = "foo.sdb"
+  echo "Is file= ", out_file, "  present?"
+  if fileExists(out_file):
+    echo "It exists, so remove it"
+    removeFile(out_file)
+  else:
+    echo "Does not exist"
+
+  echo "open the db = ", out_file
+  # if (dbnew.open(argv[1], O_RDWR | O_TRUNC | O_CREAT, 0664) != 0)
+  ret = db.open(out_file, O_CREAT, 0o660)
+  echo "return type= ", ret
+  if ret != 0:
+    quit("strerror= " & $strerror(errno))
+
+  # Write stuff
+  if false:
+    let val = 5.7
+    for t_slice in 2..8:
+      for sl in 0..3:
+        for sr in 0..3:
+          let key = KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
+                                               spin_l: cint(sl), spin_r: cint(sr), 
+                                               mass_label: "fred")
+
+          #db.insert(key, val)
+
+  
