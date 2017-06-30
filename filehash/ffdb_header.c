@@ -87,7 +87,9 @@ filedb_num_configs(const FILEDB_DB* db)
 int
 filedb_set_user_info(FILEDB_DB* db, unsigned char* data, unsigned int len)
 {
-  return ffdb_set_user_info((FFDB_DB*)db, data, len);
+  int ret;
+  ret = ffdb_set_user_info((FFDB_DB*)db, data, len);
+  return ret;
 }
 
 
@@ -98,9 +100,7 @@ int
 filedb_get_user_info(const FILEDB_DB* db, unsigned char data[], unsigned int* len)
 {
   int ret;
-  fprintf(stderr, "%s: entering\n", __func__);
   ret = ffdb_get_user_info((FFDB_DB*)db, data, len);
-  fprintf(stderr, "%s: exiting\n", __func__);
   return ret;
 }
 
@@ -140,8 +140,6 @@ filedb_get_all_keys(FILEDB_DB* dbhh, void* keyss, unsigned int* num)
   int  ret;
   unsigned int  old_num;
 
-  printf("%s: entering\n", __func__);
-    
   /* Initialize holding location */
   old_num = 0;
   *num    = 1;
@@ -222,8 +220,6 @@ filedb_get_all_keys(FILEDB_DB* dbhh, void* keyss, unsigned int* num)
   /* close cursor */
   if (crp != NULL)
     crp->close(crp);
-
-  printf("%s: exiting\n", __func__);
 }
 
 
@@ -324,7 +320,6 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsi
 }
 
 
-#if 0
 /**
  * get key and data pair from a database pointed by pointer dbh
  *
@@ -334,29 +329,18 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsi
  *
  * @return 0 on success. Otherwise failure
  */
-int getBinaryData (FFDB_DB* dbh, const std::string& key, std::string& data) 
+int filedb_get_data(FILEDB_DB* dbhh, const FILEDB_DBT* key, FILEDB_DBT* data) 
 {
-  int ret = 0;
+  FFDB_DB*  dbh    = (FFDB_DB*)dbhh;
+  FFDB_DBT* dbkey  = (FFDB_DBT*)key;
+  FFDB_DBT* dbdata = (FFDB_DBT*)data;
 
-  // create key
-  FFDB_DBT dbkey;
-  dbkey.data = const_cast<char*>(key.c_str());
-  dbkey.size = key.size();
+  /* Initialize */
+  data->data = 0;
+  data->size = 0;
 
-  // create and empty dbt data object
-  FFDB_DBT dbdata;
-  dbdata.data = 0;
-  dbdata.size = 0;
-
-  // now retrieve data from database
-  ret = dbh->get (dbh, &dbkey, &dbdata, 0);
-  if (ret == 0) {
-    // convert object into a string
-    data.assign((char*)dbdata.data, dbdata.size);
-    // I have to use free since I use malloc in c code
-    free(dbdata.data);
-  }
-  return ret;
+  /* now retrieve data from database*/
+  return dbh->get(dbh, dbkey, dbdata, 0);
 }  
   
 
@@ -369,23 +353,12 @@ int getBinaryData (FFDB_DB* dbh, const std::string& key, std::string& data)
  *
  * @return 0 on success. Otherwise failure
  */
-int insertBinaryData (FFDB_DB* dbh, const std::string& key, const std::string& data)
+int filedb_insert_data(FILEDB_DB* dbhh, const FILEDB_DBT* key, const FILEDB_DBT* data)
 {
-  int ret;
-       
-  // create key
-  FFDB_DBT dbkey;
-  dbkey.data = const_cast<char*>(key.c_str());
-  dbkey.size = key.size();
+  FFDB_DB*  dbh    = (FFDB_DB*)dbhh;
+  FFDB_DBT* dbkey  = (FFDB_DBT*)key;
+  FFDB_DBT* dbdata = (FFDB_DBT*)data;
           
-  // create DBt object
-  FFDB_DBT dbdata;
-  dbdata.data = const_cast<char*>(data.c_str());
-  dbdata.size = data.size();
-
-  // now it is time to insert
-  ret = dbh->put (dbh, &dbkey, &dbdata, 0);
-
-  return ret;
+  /* now it is time to insert */
+  return dbh->put(dbh, dbkey, dbdata, 0);
 }
-#endif

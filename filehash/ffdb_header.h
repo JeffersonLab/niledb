@@ -179,8 +179,7 @@ filedb_set_user_info(FILEDB_DB* db, unsigned char* data, unsigned int len);
  * 
  */
 extern int
-filedb_get_user_info(const FILEDB_DB* db, unsigned char data[], 
-		      unsigned int* len);
+filedb_get_user_info(const FILEDB_DB* db, unsigned char data[], unsigned int* len);
 
 
 /**
@@ -212,6 +211,32 @@ filedb_get_all_keys(FILEDB_DB* dbhh, void* keyss, unsigned int* num);
  */
 extern void
 filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsigned int* num);
+
+
+/**
+ * get key and data pair from a database pointed by pointer dbh
+ *
+ * @param dbh database pointer
+ * @key key associated with this data. This key must be string form
+ * @data data to be stored into the database. It is in string form
+ *
+ * @return 0 on success. Otherwise failure
+ */
+extern int
+filedb_get_data(FILEDB_DB* dbh, const FILEDB_DBT* key, FILEDB_DBT* data);
+  
+
+/**
+ * Insert key and data pair in string format into the database
+ *
+ * @param dbh database pointer
+ * @key key associated with this data. This key must be string form
+ * @data data to be stored into the database. It is in string form
+ *
+ * @return 0 on success. Otherwise failure
+ */
+extern int
+filedb_insert_data(FILEDB_DB* dbh, const FILEDB_DBT* key, const FILEDB_DBT* data);
 
 
 #ifdef __cplusplus
