@@ -195,3 +195,27 @@ proc filedb_get_all_keys*(dbhh: ptr FILEDB_DB; keyss: pointer; num: ptr cuint) {
 proc filedb_get_all_pairs*(dbhh: ptr FILEDB_DB; keyss: ptr FILEDB_DBT;
                           valss: ptr FILEDB_DBT; num: ptr cuint) {.
     importc: "filedb_get_all_pairs", header: "ffdb_header.h".}
+## *
+##  get key and data pair from a database pointed by pointer dbh
+## 
+##  @param dbh database pointer
+##  @key key associated with this data. This key must be string form
+##  @data data to be stored into the database. It is in string form
+## 
+##  @return 0 on success. Otherwise failure
+## 
+
+proc filedb_get_data*(dbh: ptr FILEDB_DB; key: ptr FILEDB_DBT; data: ptr FILEDB_DBT): cint {.
+    importc: "filedb_get_data", header: "ffdb_header.h".}
+## *
+##  Insert key and data pair in string format into the database
+## 
+##  @param dbh database pointer
+##  @key key associated with this data. This key must be string form
+##  @data data to be stored into the database. It is in string form
+## 
+##  @return 0 on success. Otherwise failure
+## 
+
+proc filedb_insert_data*(dbh: ptr FILEDB_DB; key: ptr FILEDB_DBT; data: ptr FILEDB_DBT): cint {.
+    importc: "filedb_insert_data", header: "ffdb_header.h".}

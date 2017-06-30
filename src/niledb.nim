@@ -11,12 +11,8 @@ const
   FILEDB_DEFAULT_PAGESIZE = 8192
   FILEDB_DEFAULT_NUM_BUCKETS = 32
 
-# Deal with C-based arrays
-#type
-#  cArray{.unchecked.}[T] = array[0,T]
-#
-#template `[]`(x: cArray): untyped = addr x[0]
-#template `&`(x: ptr cArray): untyped = addr x[0]
+# Need C-based free
+proc cfree(p: pointer): void {.importc: "free", header: "stdlib.h".}
 
 template asarray*[T](p:pointer):auto =
   ## Convert pointers to C-style arrays of types.
@@ -113,14 +109,14 @@ proc enablePageMove*(filedb: var ConfDataStoreDB) =
 proc disablePageMove*(filedb: var ConfDataStoreDB) =
   filedb.options.rearrangepages = 0
 
-proc setMaxUserInfoLen*(filedb: var ConfDataStoreDB; len: cuint) =
+proc setMaxUserInfoLen*(filedb: var ConfDataStoreDB; len: int) =
   ## Set and get maximum user information length
-  filedb.options.userinfolen = len + 1
+  filedb.options.userinfolen = cuint(len) + 1
   ##  account for possible null terminator on string
   
-proc getMaxUserInfoLen*(filedb: ConfDataStoreDB): cuint {.noSideEffect.} =
-  if filedb.dbh == nil: return filedb.options.userinfolen
-  return filedb_max_user_info_len(filedb.dbh)
+proc getMaxUserInfoLen*(filedb: ConfDataStoreDB): int {.noSideEffect.} =
+  if filedb.dbh == nil: return int(filedb.options.userinfolen)
+  return int(filedb_max_user_info_len(filedb.dbh))
 
 proc setMaxNumberConfigs*(filedb: var ConfDataStoreDB; num: cuint) =
   ## Set and get maximum number of configurations
@@ -130,7 +126,7 @@ proc getMaxNumberConfigs*(filedb: ConfDataStoreDB): cuint {.noSideEffect.} =
   if filedb.dbh == nil: return filedb.options.numconfigs
   return filedb_num_configs(filedb.dbh)
 
-proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: cint): cint =
+proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: cint): int =
   ## Open
   ## @param ``file`` filename holding all data and keys
   ## @param ``open_flags``: can be regular UNIX file open flags such as: O_RDONLY, O_RDWR, O_TRUNC
@@ -139,38 +135,41 @@ proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: ci
   ## @return 0 on success, -1 on failure with proper errno set
   var foo: cstring = file
   echo "open: here are options:\n", filedb.options
+  filedb.filename = file
   filedb.dbh = filedb_dbopen(foo, open_flags, mode, addr(filedb.options))
   if filedb.dbh == nil: return -1
   return 0
+
 
 proc close*(filedb: var ConfDataStoreDB): cint =
   ## Close a database<
   return filedb_close(filedb.dbh)
   
-proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): cint =
+
+proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): int =
   ## Insert a pair of data and key into the database
   ## data is not ensemble, but a vector of complex.
   ## @param key a key
   ## @param data a user provided data
   ##
   ## @return 0 on successful write, -1 on failure with proper errno set
-  let keyObj: cstring = serializeBinary(key);
+  var keyObj = serializeBinary(key)
 
   # create key
-  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
+  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
           
   # Convert data into binary form
-  let dataObj = serializeBinary(data)
+  var dataObj = serializeBinary(data)
 
   # create DBt object
-  let dbdata = FILEDB_DBT(data: addr(dataObj), size: dataObj.size)
+  var dbdata = FILEDB_DBT(data: addr(dataObj[0]), size: cuint(dataObj.len))
 
   # now it is time to insert
-  let ret: cint = filedb.dbh.put(filedb.dbh, addr(dbkey), addr(dbdata), 0)
+  let ret = int(filedb_insert_data(filedb.dbh, addr(dbkey), addr(dbdata)))
   return ret
 
 
-proc get*[K,D](filedb: var ConfDataStoreDB; key: K; data: var D): cint =
+proc get*[K,D](filedb: var ConfDataStoreDB; key: K; data: var D): int =
   ## Get data for a given key
   ## @param key user supplied key
   ## @param data after the call data will be populated
@@ -178,15 +177,13 @@ proc get*[K,D](filedb: var ConfDataStoreDB; key: K; data: var D): cint =
   let keyObj: cstring = serializeBinary(key);
 
   # create key
-  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
+  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.len())
           
   # create and empty dbt data object
   var dbdata: FILEDB_DBT
-  dbdata.data = 0
-  dbdata.size = 0
 
   # now retrieve data from database
-  let ret: cint = filedb.dbh.get(filedb.dbh, addr(dbkey), addr(dbdata), 0)
+  let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata), 0)
   if ret == 0:
     try:
       # convert object into a string
@@ -194,18 +191,17 @@ proc get*[K,D](filedb: var ConfDataStoreDB; key: K; data: var D): cint =
       let dataObj = string(dbdata.data)
       data = deserializeBinary[D](dataObj)
       # I have to use free since I use malloc in c code
-      #####      free(dbdata.data)
-      echo "FIX ME"
+      cfree(dbdata.data)
     except:
       quit("failed to deserialize")
 
-  return ret
+  return int(ret)
 
 proc exist*[K](filedb: var ConfDataStoreDB; key: K): bool =
   ## Does this key exist in the store
   ## @param key a key object
   ## @return true if the answer is yes
-  let keyObj: cstring = serializeBinary(key)
+  let keyObj = serializeBinary(key)
 
   # create key
   let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
@@ -218,7 +214,7 @@ proc exist*[K](filedb: var ConfDataStoreDB; key: K): bool =
   # now retrieve data from database
   let ret: cint = filedb.dbh.get(filedb.dbh, addr(dbkey), addr(dbdata), 0)
   if ret == 0:
-    #####      free(dbdata.data)
+    cfree(dbdata.data)
     result = true
   else:
     result = false
@@ -235,8 +231,6 @@ proc binaryKeys*(filedb: ConfDataStoreDB): seq[string] =
     dbkeys: pointer
     num0:   cuint
     
-  proc cfree(p: pointer): void {.importc: "free", header: "stdlib.h".}
-
 
   # Grab all keys in string form
   echo "call filedb_get_all"
@@ -347,15 +341,14 @@ proc storageName*(filedb: ConfDataStoreDB): string {.noSideEffect.} =
   return filedb.filename
 
 
-proc insertUserdata*(filedb: var ConfDataStoreDB; user_data: string): cint =
+proc insertUserdata*(filedb: var ConfDataStoreDB; user_data: string): int =
   ## Insert user data into the  metadata database
   ##
   ## @param user_data user supplied data
   ## @return returns 0 if success, else failure
-  #  var foo = cstring(user_data)
-  #  return filedb_set_user_info(filedb.dbh, addr(foo), foo.len)
-  return filedb_set_user_info(filedb.dbh, cast[ptr cuchar](user_data[0]),
-                            cuint(user_data.len))
+  var dd: cstring
+  shallowCopy(dd, user_data)
+  return filedb_set_user_info(filedb.dbh, cast[ptr cuchar](addr(dd[0])), cuint(user_data.len))
 
 
 proc getUserdata*(filedb: ConfDataStoreDB): string =
@@ -386,80 +379,144 @@ when isMainModule:
       spin_r:     cint     ## spin index
       mass_label: cstring  ## A mass label
 
-  # Need to declare something
-  echo "Declare conf db"
-  var db = newConfDataStoreDB()
+  # Hold onto this
+  var meta:string
 
-  # Open a file
-  let file = "prop.sdb"
-  echo "Is file= ", file, "  present?"
-  if fileExists(file):
-    echo "hooray, it exists"
-  else:
-    quit("oops, does not exist")
-
-  echo "open the db = ", file
-  var ret = db.open(file, O_RDONLY, 0o400)
-  echo "return type= ", ret
-  if ret != 0:
-    quit("strerror= " & $strerror(errno))
-
-  # Try metadata
-  echo "Get metadata"
-  let meta = db.getUserdata()
-  #  echo "metadata = ", meta
-  echo "it did not blowup..."
-  
-  # Tests
+  #
+  # Test reading an existing DB
+  #
   if true:
+    # Need to declare something
+    echo "Declare conf db"
+    var db = newConfDataStoreDB()
+
+    # Open a file
+    let file = "prop.sdb"
+    echo "Is file= ", file, "  present?"
+    if fileExists(file):
+      echo "hooray, it exists"
+    else:
+      quit("oops, does not exist")
+
+    echo "open the db = ", file
+    var ret = db.open(file, O_RDONLY, 0o400)
+    echo "return type= ", ret
+    if ret != 0:
+      quit("strerror= " & $strerror(errno))
+
+    # Try metadata
+    echo "Get metadata"
+    meta = db.getUserdata()
+    #  echo "metadata = ", meta
+    echo "it did not blowup..."
+  
+    # Tests
+    if true:
+      # Read all the keys
+      echo "try getting all the binary keys"
+      let all_keys = db.binaryKeys()
+      echo "found num keys= ", all_keys.len
+      echo "here is the first key: len= ", all_keys[0].len, "  val= ", printBin(all_keys[0])
+
+      # Deserialize the first key
+      echo "Deserialize..."
+      let foo = deserializeBinary[KeyPropElementalOperator_t](all_keys[0])
+      echo "here it is:\n", foo
+
     # Read all the keys
-    echo "try getting all the binary keys"
-    let all_keys = db.binaryKeys()
-    echo "found num keys= ", all_keys.len
-    echo "here is the first key: len= ", all_keys[0].len, "  val= ", printBin(all_keys[0])
+    if true:
+      echo "try getting all the deserialized keys"
+      let des_keys = keys[KeyPropElementalOperator_t](db)
+      echo "found num keys= ", des_keys.len
+      echo "here is the first key: len= ", des_keys.len, "  val= ", des_keys[0]
 
-    # Deserialize the first key
-    echo "Deserialize..."
-    let foo = deserializeBinary[KeyPropElementalOperator_t](all_keys[0])
-    echo "here it is:\n", foo
+    # Close
+    if (db.close() != 0):
+      quit("Some strange error closing db")
 
-  # Read all the keys
+  #
+  # Test writing a DB
+  #
   if true:
-    echo "try getting all the deserialized keys"
-    let des_keys = keys[KeyPropElementalOperator_t](db)
-    echo "found num keys= ", des_keys.len
-    echo "here is the first key: len= ", des_keys.len, "  val= ", des_keys[0]
+    # Need to declare something
+    echo "Declare conf db"
+    var db = newConfDataStoreDB()
 
-  # Close
-  if (db.close() != 0):
-    quit("Some strange error closing db")
+    # Let us write a file
+    let out_file = "foo.sdb"
+    echo "Is file= ", out_file, "  present?"
+    if fileExists(out_file):
+      echo "It exists, so remove it"
+      removeFile(out_file)
+    else:
+      echo "Does not exist"
 
-  # Let us write a file
-  let out_file = "foo.sdb"
-  echo "Is file= ", out_file, "  present?"
-  if fileExists(out_file):
-    echo "It exists, so remove it"
-    removeFile(out_file)
-  else:
-    echo "Does not exist"
+    # Meta-data
+    echo "Here is the metadata to insert:\n", meta
+    db.setMaxUserInfoLen(meta.len)
 
-  echo "open the db = ", out_file
-  # if (dbnew.open(argv[1], O_RDWR | O_TRUNC | O_CREAT, 0664) != 0)
-  ret = db.open(out_file, O_CREAT, 0o660)
-  echo "return type= ", ret
-  if ret != 0:
-    quit("strerror= " & $strerror(errno))
+    echo "open the db = ", out_file
+    var ret = db.open(out_file, O_RDWR or O_TRUNC or O_CREAT, 0o664)
+    echo "open = ", out_file, "  return type= ", ret
+    if ret != 0:
+      quit("strerror= " & $strerror(errno))
 
-  # Write stuff
-  if false:
-    let val = 5.7
-    for t_slice in 2..8:
-      for sl in 0..3:
-        for sr in 0..3:
-          let key = KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
-                                               spin_l: cint(sl), spin_r: cint(sr), 
-                                               mass_label: "fred")
+    # Insert new DB-meta
+    ret = db.insertUserdata(meta)
+    if ret != 0:
+      quit("strerror= " & $strerror(errno))
+ 
+    # Write stuff
+    if true:
+      let val = 5.7
+      for t_slice in 9..10:
+        for sl in 0..3:
+          for sr in 0..3:
+            echo "t_slice= ", t_slice, " sl= ", sl, " sr= ", sr
+            let key = KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
+                                                 spin_l: cint(sl), spin_r: cint(sr), 
+                                                 mass_label: "fred")
 
-          #db.insert(key, val)
+            let ret = db.insert(key, val)
+            if ret != 0:
+              echo "Ooops, ret= ", ret
+              quit("Error in insertion")
 
+    # Finish up
+    if (db.close() != 0):
+      quit("Some strange error closing db")
+
+    
+  #
+  # Test reading from a previously written DB
+  #
+  if true:
+    # Need to declare something
+    echo "Declare conf db"
+    var db = newConfDataStoreDB()
+
+    # Open a file
+    let file = "foo.sdb"
+    echo "Is file= ", file, "  present?"
+    if fileExists(file):
+      echo "hooray, it exists"
+    else:
+      quit("oops, does not exist")
+
+    echo "open the db = ", file
+    var ret = db.open(file, O_RDONLY, 0o400)
+    echo "return type= ", ret
+    if ret != 0:
+      quit("strerror= " & $strerror(errno))
   
+    # Read all the keys
+    if true:
+      echo "try getting all the deserialized keys"
+      let des_keys = keys[KeyPropElementalOperator_t](db)
+      echo "found num keys= ", des_keys.len
+      echo "here are all the keys: len= ", des_keys.len, "  keys:\n", des_keys
+
+    # Close
+    if (db.close() != 0):
+      quit("Some strange error closing db")
+
