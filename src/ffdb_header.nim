@@ -192,9 +192,9 @@ proc filedb_get_all_keys*(dbhh: ptr FILEDB_DB; keyss: pointer; num: ptr cuint) {
 ##  Return all keys & data to vectors in binary form of strings
 ## 
 
-proc filedb_get_all_pairs*(dbhh: ptr FILEDB_DB; keyss: ptr FILEDB_DBT;
-                          valss: ptr FILEDB_DBT; num: ptr cuint) {.
-    importc: "filedb_get_all_pairs", header: "ffdb_header.h".}
+proc filedb_get_all_pairs*(dbhh: ptr FILEDB_DB; keyss: pointer; valss: pointer;
+                          num: ptr cuint) {.importc: "filedb_get_all_pairs",
+    header: "ffdb_header.h".}
 ## *
 ##  get key and data pair from a database pointed by pointer dbh
 ## 

@@ -210,7 +210,7 @@ filedb_get_all_keys(FILEDB_DB* dbhh, void* keyss, unsigned int* num);
  * Return all keys & data to vectors in binary form of strings
  */
 extern void
-filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsigned int* num);
+filedb_get_all_pairs(FILEDB_DB* dbhh, void* keyss, void* valss, unsigned int* num);
 
 
 /**

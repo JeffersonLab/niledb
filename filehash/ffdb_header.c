@@ -131,7 +131,7 @@ filedb_dbpanic(FILEDB_DB* dbp)
 void
 filedb_get_all_keys(FILEDB_DB* dbhh, void* keyss, unsigned int* num)
 {
-  FFDB_DB*  dbh  = (FFDB_DB*)dbhh;
+  FFDB_DB*   dbh  = (FFDB_DB*)dbhh;
   FFDB_DBT** keys = (FFDB_DBT**)keyss;
   int (*cursor) (const struct __ffdb *, ffdb_cursor_t **, unsigned int type) = dbh->cursor;
 
@@ -227,14 +227,15 @@ filedb_get_all_keys(FILEDB_DB* dbhh, void* keyss, unsigned int* num)
  * Return all keys & data to vectors in binary form of strings
  */
 void
-filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsigned int* num)
+filedb_get_all_pairs(FILEDB_DB* dbhh, void* keyss, void* valss, unsigned int* num)
 {
-  FFDB_DB*  dbh  = (FFDB_DB*)dbhh;
-  FFDB_DBT* keys = (FFDB_DBT*)keyss;
-  FFDB_DBT* vals = (FFDB_DBT*)valss;
+  FFDB_DB*   dbh  = (FFDB_DB*)dbhh;
+  FFDB_DBT** keys = (FFDB_DBT**)keyss;
+  FFDB_DBT** vals = (FFDB_DBT**)valss;
   int (*cursor) (const struct __ffdb *, ffdb_cursor_t **, unsigned int type) = dbh->cursor;
 
-  FFDB_DBT  dbkey, dbdata;
+  FFDB_DBT*  dbkey;
+  FFDB_DBT*  dbval;
   ffdb_cursor_t* crp;
   int  ret;
   unsigned int  old_num;
@@ -242,17 +243,17 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsi
   /* Initialize holding location */
   old_num = 0;
   *num    = 1;
-  keys = (FFDB_DBT*)calloc(1, (*num)*sizeof(FFDB_DBT));
-  if (keys == NULL)
+  *keys = (FFDB_DBT*)calloc(1, (*num)*sizeof(FFDB_DBT));
+  if (*keys == NULL)
   {
-    fprintf(stderr, "%s: cannot create intermediate", __func__);
+    fprintf(stderr, "%s: cannot create initial space", __func__);
     exit(1);
   }
 
-  vals = (FFDB_DBT*)calloc(1, (*num)*sizeof(FFDB_DBT));
-  if (vals == NULL)
+  *vals = (FFDB_DBT*)calloc(1, (*num)*sizeof(FFDB_DBT));
+  if (*vals == NULL)
   {
-    fprintf(stderr, "%s: cannot create intermediate", __func__);
+    fprintf(stderr, "%s: cannot create initial space", __func__);
     exit(1);
   }
 
@@ -264,32 +265,63 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsi
     exit(1);
   }
 
-  /* First test */
-  keys[old_num].data = vals[old_num].data = 0;
-  keys[old_num].size = vals[old_num].size = 0;
-
-  while ((ret = crp->get(crp, &keys[old_num], &vals[old_num], FFDB_NEXT)) == 0) 
+  /* Create initial space */
+  *keys = (FFDB_DBT*)realloc(*keys, (*num)*sizeof(FFDB_DBT));
+  if (*keys == NULL)
   {
+    fprintf(stderr, "%s: cannot create space", __func__);
+    exit(1);
+  }
+
+  *vals = (FFDB_DBT*)realloc(*vals, (*num)*sizeof(FFDB_DBT));
+  if (*vals == NULL)
+  {
+    fprintf(stderr, "%s: cannot create space", __func__);
+    exit(1);
+  }
+
+  /* First test */
+  dbkey = &((*keys)[old_num]);
+  dbval = &((*vals)[old_num]);
+  dbkey->data = dbval->data = 0;
+  dbkey->size = dbval->size = 0;
+
+  while ((ret = crp->get(crp, dbkey, dbval, FFDB_NEXT)) == 0) 
+  {
+#if 1
+    if (old_num == 0)
+    {
+      printf("%s: key[%d] = 0x%p  sz= %d  v= --", __func__, old_num, dbkey->data, dbkey->size);
+      for(int i=0; i < dbkey->size; ++i)
+      {
+	printf(" %x", ((unsigned char*)(dbkey->data))[i]);
+      }
+      printf("--\n");
+      /* exit(0); */
+    }
+#endif
+
     /* Need to create space for next key */
     old_num = *num;
     *num += 1;
-    keys = (FFDB_DBT*)realloc(keys, (*num)*sizeof(FFDB_DBT));
-    if (keys == NULL)
+    *keys = (FFDB_DBT*)realloc(*keys, (*num)*sizeof(FFDB_DBT));
+    if (*keys == NULL)
     {
       fprintf(stderr, "%s: cannot create intermediate", __func__);
       exit(1);
     }
 
-    vals = (FFDB_DBT*)realloc(vals, (*num)*sizeof(FFDB_DBT));
-    if (vals == NULL)
+    *vals = (FFDB_DBT*)realloc(*vals, (*num)*sizeof(FFDB_DBT));
+    if (*vals == NULL)
     {
       fprintf(stderr, "%s: cannot create intermediate", __func__);
       exit(1);
     }
 
     /* prepare */
-    keys[old_num].data = vals[old_num].data = 0;
-    keys[old_num].size = vals[old_num].size = 0;
+    dbkey = &((*keys)[old_num]); dbval = &((*vals)[old_num]);
+    dbkey->data = dbval->data = 0;
+    dbkey->size = dbval->size = 0;
   }
 
   if (ret != FFDB_NOT_FOUND)
@@ -297,18 +329,18 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsi
     fprintf(stderr, "%s:  create Cursor Error", __func__);
     exit(1);
   }
-    
+  
   /* Remove the test space. The space within the key was not allocated, so do not need an additional free */
   *num -= 1;
-  keys = (FFDB_DBT*)realloc(keys, (*num)*sizeof(FFDB_DBT));
-  if (keys == NULL)
+  *keys = (FFDB_DBT*)realloc(*keys, (*num)*sizeof(FFDB_DBT));
+  if (*keys == NULL)
   {
     fprintf(stderr, "%s: cannot create intermediate", __func__);
     exit(1);
   }
 
-  vals = (FFDB_DBT*)realloc(vals, (*num)*sizeof(FFDB_DBT));
-  if (vals == NULL)
+  *vals = (FFDB_DBT*)realloc(*vals, (*num)*sizeof(FFDB_DBT));
+  if (*vals == NULL)
   {
     fprintf(stderr, "%s: cannot create intermediate", __func__);
     exit(1);
@@ -317,6 +349,13 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, FILEDB_DBT* keyss, FILEDB_DBT* valss, unsi
   /* close cursor */
   if (crp != NULL)
     crp->close(crp);
+
+#if 1
+  printf("%s: keys= %p  vals= %p\n", __func__, keys, vals);
+  printf("%s: keys[0].data= %p  vals[0].data= %p\n", __func__, (*keys)[0].data, (*vals)[0].data);
+ 
+#endif
+
 }
 
 

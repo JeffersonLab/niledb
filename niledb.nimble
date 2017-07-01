@@ -7,7 +7,7 @@ srcDir        = "src"
 skipDirs      = @["tmp"]
 
 # Dependencies
-requires "nim >= 0.17.0"
+requires "nim >= 0.17.0", "serializetools >= 1.5.1"
 
 # Builds
 task test, "Run the test suite":
