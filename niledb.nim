@@ -33,11 +33,11 @@ proc `$`*(a: FILEDB_DBT): string =
   copyMem(addr(result[0]), a.data, sz)
 
 
-proc printBin(x:string): string =
-  ## Print a binary string
-  result = "0x"
-  for e in items(x):
-    result.add(toHex(e))
+#proc printBin(x:string): string =
+#  ## Print a binary string
+#  result = "0x"
+#  for e in items(x):
+#    result.add(toHex(e))
 
 
 ## Main type
