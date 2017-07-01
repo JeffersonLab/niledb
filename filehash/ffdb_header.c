@@ -47,8 +47,8 @@ FILEDB_DB*
 filedb_dbopen(const char* fname, int flags, int mode, const void* openinfo)
 {
   FFDB_HASHINFO* info = (FFDB_HASHINFO*)openinfo;
-  fprintf(stdout, "%s: open to dbopen= %s\n", __func__, fname);
-  fprintf(stdout, "struct= %d %d %lu %d %d %d\n", info->bsize, info->nbuckets, info->cachesize, info->rearrangepages, info->userinfolen, info->numconfigs);
+  /* fprintf(stdout, "%s: open to dbopen= %s\n", __func__, fname); */
+  /* fprintf(stdout, "struct= %d %d %lu %d %d %d\n", info->bsize, info->nbuckets, info->cachesize, info->rearrangepages, info->userinfolen, info->numconfigs); */
   return (FILEDB_DB*)ffdb_dbopen(fname, flags, mode, info);
 }
 
@@ -173,19 +173,6 @@ filedb_get_all_keys(FILEDB_DB* dbhh, void* keyss, unsigned int* num)
 
   while ((ret = crp->get(crp, dbkey, 0, FFDB_NEXT)) == 0) 
   {
-#if 1
-    if (old_num == 0)
-    {
-      printf("%s: key[%d] = 0x%p  sz= %d  v= --", __func__, old_num, dbkey->data, dbkey->size);
-      for(int i=0; i < dbkey->size; ++i)
-      {
-	printf(" %x", ((unsigned char*)(dbkey->data))[i]);
-      }
-      printf("--\n");
-      /* exit(0); */
-    }
-#endif
-
     /* Need to create space for next key */
     old_num = *num;
     *num += 1;
@@ -288,19 +275,6 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, void* keyss, void* valss, unsigned int* nu
 
   while ((ret = crp->get(crp, dbkey, dbval, FFDB_NEXT)) == 0) 
   {
-#if 1
-    if (old_num == 0)
-    {
-      printf("%s: key[%d] = 0x%p  sz= %d  v= --", __func__, old_num, dbkey->data, dbkey->size);
-      for(int i=0; i < dbkey->size; ++i)
-      {
-	printf(" %x", ((unsigned char*)(dbkey->data))[i]);
-      }
-      printf("--\n");
-      /* exit(0); */
-    }
-#endif
-
     /* Need to create space for next key */
     old_num = *num;
     *num += 1;
@@ -349,13 +323,6 @@ filedb_get_all_pairs(FILEDB_DB* dbhh, void* keyss, void* valss, unsigned int* nu
   /* close cursor */
   if (crp != NULL)
     crp->close(crp);
-
-#if 1
-  printf("%s: keys= %p  vals= %p\n", __func__, keys, vals);
-  printf("%s: keys[0].data= %p  vals[0].data= %p\n", __func__, (*keys)[0].data, (*vals)[0].data);
- 
-#endif
-
 }
 
 
