@@ -5,11 +5,6 @@ import niledb, tables,
 import unittest
 import strutils, posix, os, hashes
   
-#  serializetools/serializebin, serializetools/crc32,
-#  ffdb_header, system, tables, serializetools/serialstring,
-#  strutils
-
-
 # Useful for debugging
 proc printBin(x:string): string =
   ## Print a binary string
@@ -40,10 +35,14 @@ proc hash(x: KeyPropElementalOperator_t): Hash =
 
 
 #-----------------------------------------------------------
+#
+# Unittests of the DB functions
+#
 suite "Tests of DB functions":
   # Hold onto this
   var meta:string
 
+  #--------------------------------
   test "Test reading an existing DB":
     # Need to declare something
     echo "Declare conf db"
@@ -96,7 +95,7 @@ suite "Tests of DB functions":
     require(ret == 0)
 
 
-#--------------------------------
+  #--------------------------------
   test "Test writing a DB":
     # Need to declare something
     echo "Declare conf db"
@@ -127,27 +126,30 @@ suite "Tests of DB functions":
       quit("strerror= " & $strerror(errno))
  
     # Write stuff
-    if true:
-      let val:float = 5.7
-      for t_slice in 9..10:
-        for sl in 0..3:
-          for sr in 0..3:
-            echo "t_slice= ", t_slice, " sl= ", sl, " sr= ", sr
-            let key = KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
-                                                 spin_l: cint(sl), spin_r: cint(sr), 
-                                                 mass_label: SerialString("fred"))
+    var kv = initTable[KeyPropElementalOperator_t,float]()
 
-            let ret = db.insert(key, val)
-            if ret != 0:
-              echo "Ooops, ret= ", ret
-              quit("Error in insertion")
+    let val:float = 5.7
+    for t_slice in 9..10:
+      for sl in 0..3:
+        for sr in 0..3:
+          echo "t_slice= ", t_slice, " sl= ", sl, " sr= ", sr
+          let key = KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
+                                               spin_l: cint(sl), spin_r: cint(sr), 
+                                               mass_label: SerialString("fred"))
+          add(kv,key,val)
+
+    # insert the entire table
+    ret = db.insert(kv)
+    if ret != 0:
+      echo "Ooops, ret= ", ret
+      quit("Error in insertion")
 
     # Close
     ret = db.close()
     require(ret == 0)
 
     
-#--------------------------------
+  #--------------------------------
   test "Test reading from a previously written DB":
     # Need to declare something
     echo "Declare conf db"
@@ -166,15 +168,23 @@ suite "Tests of DB functions":
     echo "return type= ", ret
     if ret != 0:
       quit("strerror= " & $strerror(errno))
+
+    # Save a key for later testing
+    var save_a_key: KeyPropElementalOperator_t
   
     # Read all the keys & data
-    if true:
-      echo "try getting all the deserialized pairs"
-      let des_pairs = allPairs[KeyPropElementalOperator_t,float](db)
-      echo "found num keys= ", des_pairs.len
-      echo "here are all the keys: len= ", des_pairs.len, "  keys:\n"
-      for k,v in des_pairs:
-        echo "k= ", $k, "  v= ", $v
+    echo "try getting all the deserialized pairs"
+    let des_pairs = allPairs[KeyPropElementalOperator_t,float](db)
+    echo "found num keys= ", des_pairs.len
+    echo "here are all the keys: len= ", des_pairs.len, "  keys:\n"
+    var first = true
+    for k,v in des_pairs:
+      echo "k= ", $k, "  v= ", $v
+      if first: 
+        save_a_key = k
+
+    # Test for the key
+    echo "Does that special key exist? ", exist(db, save_a_key)
 
     # Close
     ret = db.close()

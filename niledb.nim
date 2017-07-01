@@ -152,7 +152,6 @@ proc close*(filedb: var ConfDataStoreDB): cint =
 
 proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): int =
   ## Insert a pair of data and key into the database
-  ## data is not ensemble, but a vector of complex.
   ## @param key a key
   ## @param data a user provided data
   ##
@@ -173,23 +172,29 @@ proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): int =
   return ret
 
 
+proc insert*[K,D](filedb: var ConfDataStoreDB; kv: Table[K,D]): int =
+  ## Insert a table of key/value pairs `kv` into the database
+  result = 0
+  for k,v in pairs(kv):
+    let ret = filedb.insert(k,v)
+    if ret != 0: return ret
+
+
 proc get*[K,D](filedb: ConfDataStoreDB; key: K; data: var D): int =
   ## Get data for a given key
   ## @param key user supplied key
   ## @param data after the call data will be populated
   ## @return 0 on success, otherwise the key not found
-  let keyObj: cstring = serializeBinary(key);
+  let keyObj: cstring = serializeBinary(key)
 
   # create key
   let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.len())
           
   # create and empty dbt data object
   var dbdata: FILEDB_DBT
-  dbdata.data = 0
-  dbdata.size = 0
 
   # now retrieve data from database
-  let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata), 0)
+  let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata))
   if ret == 0:
     try:
       # convert object into a string
@@ -217,18 +222,16 @@ proc exist*[K](filedb: ConfDataStoreDB; key: K): bool =
   ## Does this key exist in the store
   ## @param key a key object
   ## @return true if the answer is yes
-  let keyObj = serializeBinary(key)
+  var keyObj = serializeBinary(key)
 
   # create key
-  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.size())
+  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
           
-  # create and empty dbt data object
+  # create DBt object
   var dbdata: FILEDB_DBT
-  dbdata.data = 0
-  dbdata.size = 0
 
   # now retrieve data from database
-  let ret: cint = filedb.dbh.get(filedb.dbh, addr(dbkey), addr(dbdata), 0)
+  let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata))
   if ret == 0:
     cfree(dbdata.data)
     result = true
