@@ -13,7 +13,7 @@ task test, "Run the test suite":
   exec "cd tests; nim c -r test_niledb"
 
 task docgen, "Regenerate the documentation":
-  exec "nim doc2 --out:docs/niledb.html src/niledb.nim"
+  exec "nim doc2 --out:docs/niledb.html --path:./niledb/private niledb.nim"
 
 # Build the filehash C-lib
 before install:
