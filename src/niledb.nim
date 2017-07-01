@@ -12,7 +12,7 @@ const
   FILEDB_DEFAULT_NUM_BUCKETS = 32
 
 # Need C-based printf
-proc cprintf(formatstr: cstring) {.importc: "printf", varargs, header: "<stdio.h>".}
+#proc cprintf(formatstr: cstring) {.importc: "printf", varargs, header: "<stdio.h>".}
 
 # Need C-based free
 proc cfree(p: pointer): void {.importc: "free", header: "<stdlib.h>".}
@@ -137,7 +137,6 @@ proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: ci
   ##
   ## @return 0 on success, -1 on failure with proper errno set
   var foo: cstring = file
-  echo "open: here are options:\n", filedb.options
   filedb.filename = file
   filedb.dbh = filedb_dbopen(foo, open_flags, mode, addr(filedb.options))
   if filedb.dbh == nil: return -1
@@ -145,7 +144,7 @@ proc open*(filedb: var ConfDataStoreDB; file: string; open_flags: cint; mode: ci
 
 
 proc close*(filedb: var ConfDataStoreDB): cint =
-  ## Close a database<
+  ## Close a database
   return filedb_close(filedb.dbh)
   
 
@@ -172,7 +171,7 @@ proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): int =
   return ret
 
 
-proc get*[K,D](filedb: var ConfDataStoreDB; key: K; data: var D): int =
+proc get*[K,D](filedb: ConfDataStoreDB; key: K; data: var D): int =
   ## Get data for a given key
   ## @param key user supplied key
   ## @param data after the call data will be populated
@@ -203,7 +202,16 @@ proc get*[K,D](filedb: var ConfDataStoreDB; key: K; data: var D): int =
   return int(ret)
 
 
-proc exist*[K](filedb: var ConfDataStoreDB; key: K): bool =
+proc `[]`*[K,D](filedb: ConfDataStoreDB; key: K): D =
+  ## Get data for a given key
+  ## @param key user supplied key
+  ## @return data on success, otherwise abort
+  let ret = filedb.get[K,D](key, result)
+  if ret != 0:
+    quit("Error retrieving key = " & $key)
+
+
+proc exist*[K](filedb: ConfDataStoreDB; key: K): bool =
   ## Does this key exist in the store
   ## @param key a key object
   ## @return true if the answer is yes
@@ -232,17 +240,12 @@ proc allBinaryKeys*(filedb: ConfDataStoreDB): seq[string] =
   ## by keys after this call.
 
   var 
-    #foobar: array[0..ArrayDummySize, cstring]
-    #dbkeys: ptr FILEDB_DBT
     dbkeys: pointer
     num0:   cuint
     
-
   # Grab all keys in string form
-  echo "call filedb_get_all"
   filedb_get_all_keys(filedb.dbh, addr(dbkeys), addr(num0))
   let num = int(num0)
-  echo "keys: num keys= ", num
 
   # Hold the result
   newSeq[string](result, num)
@@ -250,22 +253,12 @@ proc allBinaryKeys*(filedb: ConfDataStoreDB): seq[string] =
   # Loop over all the keys and deserialize them
   for i in 0..num-1:
     ## convert into key object
-    var sz:int = int(asarray[FILEDB_DBT](dbkeys)[i].size)
-    #var keyObj = newString(sz)
-    #copyMem(addr(keyObj[0]), asarray[FILEDB_DBT](dbkeys)[i].data, sz)
-
-    # put this new key into the vector
     result[i] = $asarray[FILEDB_DBT](dbkeys)[i]
-    #result[i] = keyObj
-    if (i == 0) or (i < 120):
-      echo "binaryKeys: i= ", i, "  sz= ", sz,  "  result.len= ", result[i].len, " res= ", printBin(result[i])
     
     # free memory
-    #echo "i= ", i, "  sz= ", sz
     cfree(asarray[FILEDB_DBT](dbkeys)[i].data)
 
   # Cleanup
-  echo "free"
   cfree(dbkeys)
 
 
@@ -279,78 +272,43 @@ proc allBinaryPairs*(filedb: ConfDataStoreDB): seq[tuple[key:string,val:string]]
     dbkeys: pointer
     dbvals: pointer
     num0:   cuint
-    sz:     int
 
   # Grab all keys & data in string form
-  echo "call filedb_get_pairs"
   filedb_get_all_pairs(filedb.dbh, addr(dbkeys), addr(dbvals), addr(num0))
   let num = int(num0)
-  echo "keys: num keys= ", num
 
-  echo "try asarray"
-  #  let foo = dbkeys[]
-  let foo = asarray[FILEDB_DBT](dbkeys)[0]
-  echo "foo.sz= ", $foo.size
-  
   # Hold the result
   newSeq[tuple[key:string,val:string]](result, num)
 
   # Loop over all the keys and deserialize them
   for i in 0..num-1:
-    # convert into key object
-    #sz = int(asarray[FILEDB_DBT](dbkeys)[i].size)
-    #var keyObj = newString(sz)
-    #copyMem(addr(keyObj[0]), asarray[FILEDB_DBT](dbkeys)[i].data, sz)
-
-    # convert into data object
-    #sz = int(asarray[FILEDB_DBT](dbvals)[i].size)
-    #var dataObj = newString(sz)
-    #copyMem(addr(dataObj[0]), asarray[FILEDB_DBT](dbvals)[i].data, sz)
-
-    # put this new key into the table
+    # put this new pair into the table
     result[i] = ($asarray[FILEDB_DBT](dbkeys)[i], $asarray[FILEDB_DBT](dbvals)[i])
-    #result[i] = (keyObj, dataObj)
-    
-    echo "res[",i,"]= ", printBin(result[i].key)
 
     # free memory
     cfree(asarray[FILEDB_DBT](dbkeys)[i].data)
     cfree(asarray[FILEDB_DBT](dbvals)[i].data)
 
   # Cleanup
-  echo "free"
   cfree(dbkeys)
   cfree(dbvals)
 
 
 
-#proc allKeys*[K](filedb: ConfDataStoreDB, result: var seq[K]) =
 proc allKeys*[K](filedb: ConfDataStoreDB): seq[K] =
   ## Return all available keys to user
   ## @param keys user suppled an empty vector which is populated
   ## by keys after this call.
   # Grab all the binary keys
-  echo "allKeys: call allBinaryKeys"
   let all_keys = allBinaryKeys(filedb)
 
   # Hold the result
-  echo "allKeys: len= ", all_keys.len, "  newSeq"
   newSeq[K](result, all_keys.len)
 
   # Loop over all the keys and deserialize them
-  echo "allKeys: loop"
   for i in 0..all_keys.len-1:
     # convert into key object
-    if (i == 0) or (i < 120):
-      echo "i= ", i, "  key= ", printBin(all_keys[i])
     result[i] = deserializeBinary[K](all_keys[i])
-    if (i == 0) or (i < 120):
-      echo "res[",i,"]= ", result[i]
-
-  echo "allKeys: last check: here is the 0th key: ", result[0]
-  echo "another last check: result[0]: ", printBin($result[0].mass_label)
-  echo "allKeys: done"
-  #quit("bye")
 
 
 
@@ -399,10 +357,8 @@ proc getUserdata*(filedb: ConfDataStoreDB): string =
   ## @param user_data user supplied buffer to store user data
   ## @return returns user supplied buffer if success. Otherwise failure. 
   var len: cuint = filedb_max_user_info_len(filedb.dbh)
-  echo "getUserdata: len= ", len
   result = newString(len+1)
   var ret = filedb_get_user_info(filedb.dbh, addr(result[0]), addr(len))
-  echo "ret= ", ret
   if ret != 0:
     quit("Error returning user meta-data from db")
   return result
@@ -571,7 +527,6 @@ when isMainModule:
     if true:
       echo "try getting all the deserialized pairs"
       let des_pairs = allPairs[KeyPropElementalOperator_t,float](db)
-      #let des_pairs = db.allBinaryPairs()
       echo "found num keys= ", des_pairs.len
       echo "here are all the keys: len= ", des_pairs.len, "  keys:\n"
       for k,v in des_pairs:
