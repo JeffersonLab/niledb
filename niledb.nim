@@ -6,6 +6,8 @@ import
   ffdb_header, system, tables, serializetools/serialstring,
   strutils
 
+include ffdb_header
+
 
 const
   FILEDB_DEFAULT_PAGESIZE = 8192

@@ -3,17 +3,19 @@ version       = "1.0.0"
 author        = "Robert Edwards"
 description   = "Key/Value storage into a fast file-hash"
 license       = "MIT"
-srcDir        = "src"
-skipDirs      = @["tmp"]
+skipDirs      = @["tests","tmp"]
 
 # Dependencies
 requires "nim >= 0.17.0", "serializetools >= 1.5.1"
 
-# Builds
+# Tasks
 task test, "Run the test suite":
-  exec "nim c -r tests/test_niledb"
+  exec "cd tests; nim c -r test_niledb"
 
 task docgen, "Regenerate the documentation":
   exec "nim doc2 --out:docs/niledb.html src/niledb.nim"
 
-
+# Build the filehash C-lib
+before install:
+  echo "Building filehash"
+  exec "cd filehash; make"

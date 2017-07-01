@@ -16,12 +16,16 @@ INCLUDES = ffdb_header.h ffdb_db.h ffdb_cq.h ffdb_hash.h ffdb_hash_func.h ffdb_p
 libfilehash.a: $(OBJ)
 	echo "AR $@"
 	ar rcsu $@ $?
+	rm $(OBJ)
 
 libfilehash.a: $(OBJ)
 
 .PHONY: libfilehash.a
 
-clean: 
+clean:
 	rm -f *.o *~ libfilehash.a
+
+cleanfiles:
+	rm -f *.o *~
 
 
