@@ -3,10 +3,10 @@
 
 import 
   serializetools/serializebin, serializetools/crc32,
-  ffdb_header, system, tables, serializetools/serialstring,
+  system, tables, serializetools/serialstring,
   strutils
 
-include niledb/private/ffdb_header
+import niledb/private/ffdb_header
 
 
 const
