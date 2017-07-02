@@ -26,7 +26,7 @@ template asarray[T](p:pointer):auto =
 
 
 # String conversion
-proc `$`*(a: FILEDB_DBT): string =
+proc `$`(a: FILEDB_DBT): string =
   ## Convert a stupid C-based string `a` of length `size` into a proper string
   result = newString(a.size)
   let sz = int(a.size)
