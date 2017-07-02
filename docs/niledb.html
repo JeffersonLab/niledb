@@ -1299,10 +1299,12 @@ function main() {
     title="close(filedb: var ConfDataStoreDB): cint"><wbr />close<span class="attachedType" style="visibility:hidden">ConfDataStoreDB</span></a></li>
   <li><a class="reference" href="#insert,ConfDataStoreDB,K,D"
     title="insert[K, D](filedb: var ConfDataStoreDB; key: K; data: D): int"><wbr />insert<span class="attachedType" style="visibility:hidden">ConfDataStoreDB</span></a></li>
+  <li><a class="reference" href="#insert,ConfDataStoreDB,Table[K,D]"
+    title="insert[K, D](filedb: var ConfDataStoreDB; kv: Table[K, D]): int"><wbr />insert<span class="attachedType" style="visibility:hidden">ConfDataStoreDB</span></a></li>
   <li><a class="reference" href="#get,ConfDataStoreDB,K,D"
     title="get[K, D](filedb: ConfDataStoreDB; key: K; data: var D): int"><wbr />get<span class="attachedType" style="visibility:hidden">ConfDataStoreDB</span></a></li>
   <li><a class="reference" href="#[],ConfDataStoreDB,K"
-    title="`[]`[K, D](filedb: ConfDataStoreDB; key: K): D"><wbr />`[]`<span class="attachedType" style="visibility:hidden">ConfDataStoreDB</span></a></li>
+    title="`[]`[K](filedb: ConfDataStoreDB; key: K): string"><wbr />`[]`<span class="attachedType" style="visibility:hidden">ConfDataStoreDB</span></a></li>
   <li><a class="reference" href="#exist,ConfDataStoreDB,K"
     title="exist[K](filedb: ConfDataStoreDB; key: K): bool"><wbr />exist<span class="attachedType" style="visibility:hidden">ConfDataStoreDB</span></a></li>
   <li><a class="reference" href="#allBinaryKeys,ConfDataStoreDB"
@@ -1738,7 +1740,7 @@ class="link-seesrc" target="_blank">Source</a>
 </dd>
 <dt id="insert"><a name="insert,ConfDataStoreDB,K,D"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">D</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
-<p>Insert a pair of data and key into the database data is not ensemble, but a vector of complex. @param key a key @param data a user provided data</p>
+<p>Insert a pair of data and key into the database @param key a key @param data a user provided data</p>
 <p>@return 0 on successful write, -1 on failure with proper errno set</p>
 
 &nbsp;&nbsp;<a
@@ -1747,16 +1749,25 @@ class="link-seesrc" target="_blank">Source</a>
 <a href="/edit/devel/niledb.nim#L153" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
+<dt id="insert"><a name="insert,ConfDataStoreDB,Table[K,D]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">kv</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+<dd>
+Insert a table of key/value pairs <cite>kv</cite> into the database
+&nbsp;&nbsp;<a
+href="/tree/master/niledb.nim#L175"
+class="link-seesrc" target="_blank">Source</a>
+<a href="/edit/devel/niledb.nim#L175" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
 <dt id="get"><a name="get,ConfDataStoreDB,K,D"></a><pre><span class="Keyword">proc</span> <span class="Identifier">get</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">D</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 Get data for a given key @param key user supplied key @param data after the call data will be populated @return 0 on success, otherwise the key not found
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L176"
+href="/tree/master/niledb.nim#L183"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L176" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L183" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<dt id="[]"><a name="[],ConfDataStoreDB,K"></a><pre><span class="Keyword">proc</span> <span class="Identifier">`[]`</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">D</span></pre></dt>
+<dt id="[]"><a name="[],ConfDataStoreDB,K"></a><pre><span class="Keyword">proc</span> <span class="Identifier">`[]`</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 Get data for a given key @param key user supplied key @return data on success, otherwise abort
 &nbsp;&nbsp;<a
@@ -1769,18 +1780,18 @@ class="link-seesrc" target="_blank">Source</a>
 <dd>
 Does this key exist in the store @param key a key object @return true if the answer is yes
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L216"
+href="/tree/master/niledb.nim#L231"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L216" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L231" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allBinaryKeys"><a name="allBinaryKeys,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allBinaryKeys</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Return all available keys to user @param keys user suppled an empty vector which is populated by keys after this call.
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L239"
+href="/tree/master/niledb.nim#L252"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L239" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L252" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allBinaryPairs"><a name="allBinaryPairs,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allBinaryPairs</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
@@ -1788,27 +1799,27 @@ class="link-seesrc" target="_blank">Source</a>
 <dd>
 Return all available key/value pairs to user @param keys user suppled an empty vector which is populated by keys after this call.
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L268"
+href="/tree/master/niledb.nim#L281"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L268" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L281" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allKeys"><a name="allKeys,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allKeys</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span></pre></dt>
 <dd>
 Return all available keys to user @param keys user suppled an empty vector which is populated by keys after this call.
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L300"
+href="/tree/master/niledb.nim#L313"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L300" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L313" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allPairs"><a name="allPairs,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allPairs</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span></pre></dt>
 <dd>
 keys: var &gt;vector[K]; values: var vector[D]) = Return all pairs of keys and data @param keys user supplied empty vector to hold all keys @param data user supplied empty vector to hold data @return keys and data in the vectors having the same size
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L317"
+href="/tree/master/niledb.nim#L330"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L317" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L330" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="storageName"><a name="storageName,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">storageName</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1817,9 +1828,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p>@return database name</p>
 
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L339"
+href="/tree/master/niledb.nim#L352"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L339" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L352" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="insertUserdata"><a name="insertUserdata,ConfDataStoreDB,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insertUserdata</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">user_data</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1829,9 +1840,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p>@param user_data user supplied data @return returns 0 if success, else failure</p>
 
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L346"
+href="/tree/master/niledb.nim#L359"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L346" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L359" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="getUserdata"><a name="getUserdata,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getUserdata</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1840,9 +1851,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p>@param user_data user supplied buffer to store user data @return returns user supplied buffer if success. Otherwise failure. </p>
 
 &nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L356"
+href="/tree/master/niledb.nim#L369"
 class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L356" class="link-seesrc" target="_blank" >Edit</a>
+<a href="/edit/devel/niledb.nim#L369" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1855,7 +1866,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2017-07-01 17:36:49 UTC</small>
+        <small>Made with Nim. Generated: 2017-07-01 22:19:43 UTC</small>
       </div>
     </div>
   </div>
