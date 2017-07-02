@@ -13,8 +13,8 @@ of pages for fast retrievals and storage. Multi-threading reading is
 supported. The DB scales well, an in production, has been used to hold
 up to 80GB single files with O(100K) keys.
 
-The `serializetools` module provides tools for serialization and 
-deserialization of keys and values to/from strings.
+The [serializetools](https://github.com/JeffersonLab/serializetools) module provides 
+tools for serialization and deserialization of keys and values to/from strings.
 
 ## Example
 
