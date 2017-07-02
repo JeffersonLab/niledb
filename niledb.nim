@@ -116,7 +116,7 @@ proc disablePageMove*(filedb: var ConfDataStoreDB) =
 
 proc setMaxUserInfoLen*(filedb: var ConfDataStoreDB; len: int) =
   ## Set and get maximum user information length
-  filedb.options.userinfolen = cuint(len) + 1
+  filedb.options.userinfolen = cuint(len)
   ##  account for possible null terminator on string
   
 proc getMaxUserInfoLen*(filedb: ConfDataStoreDB): int {.noSideEffect.} =
@@ -185,10 +185,10 @@ proc get*[K,D](filedb: ConfDataStoreDB; key: K; data: var D): int =
   ## @param key user supplied key
   ## @param data after the call data will be populated
   ## @return 0 on success, otherwise the key not found
-  let keyObj: cstring = serializeBinary(key)
+  var keyObj = serializeBinary(key)
 
   # create key
-  let dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: keyObj.len())
+  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
           
   # create and empty dbt data object
   var dbdata: FILEDB_DBT
@@ -196,25 +196,35 @@ proc get*[K,D](filedb: ConfDataStoreDB; key: K; data: var D): int =
   # now retrieve data from database
   let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata))
   if ret == 0:
-    try:
-      # convert object into a string
-      # Convert data into binary form 
-      let dataObj = string(dbdata.data)
-      data = deserializeBinary[D](dataObj)
-      # I have to use free since I use malloc in c code
-      cfree(dbdata.data)
-    except:
-      quit("failed to deserialize")
+    # convert object into a string
+    data = deserializeBinary[D]($dbdata)
+    # I have to use free since I use malloc in c code
+    cfree(dbdata.data)
 
   return int(ret)
 
 
-proc `[]`*[K,D](filedb: ConfDataStoreDB; key: K): D =
+proc `[]`*[K](filedb: ConfDataStoreDB; key: K): string =
   ## Get data for a given key
   ## @param key user supplied key
   ## @return data on success, otherwise abort
-  let ret = filedb.get[K,D](key, result)
-  if ret != 0:
+  result = ""
+  var keyObj = serializeBinary(key)
+
+  # create key
+  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
+          
+  # create and empty dbt data object
+  var dbdata: FILEDB_DBT
+
+  # now retrieve data from database
+  let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata))
+  if ret == 0:
+    # convert object into a string
+    result = $dbdata
+    # I have to use free since I use malloc in c code
+    cfree(dbdata.data)
+  else:
     quit("Error retrieving key = " & $key)
 
 
@@ -362,7 +372,7 @@ proc getUserdata*(filedb: ConfDataStoreDB): string =
   ## @param user_data user supplied buffer to store user data
   ## @return returns user supplied buffer if success. Otherwise failure. 
   var len: cuint = filedb_max_user_info_len(filedb.dbh)
-  result = newString(len+1)
+  result = newString(len)
   var ret = filedb_get_user_info(filedb.dbh, addr(result[0]), addr(len))
   if ret != 0:
     quit("Error returning user meta-data from db")
