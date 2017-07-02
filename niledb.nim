@@ -6,7 +6,7 @@ import
   ffdb_header, system, tables, serializetools/serialstring,
   strutils
 
-include ffdb_header
+include niledb/private/ffdb_header
 
 
 const
