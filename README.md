@@ -36,7 +36,7 @@ MyVal_t = object
 # The DB
 var db: ConfDataStoreDB = newConfDataStoreDB()
 
-# Open and existing DB using posix file modes
+# Open an existing DB using posix file modes
 var ret = db.open("some_file", O_RDONLY, 0o400)
 
 # Grab all the keys and deserialize them
