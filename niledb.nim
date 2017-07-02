@@ -1,20 +1,17 @@
 ##   Class for storing keys and corresponding vector of objects from
 ##     all configurations
 
-import 
-  serializetools/serializebin, serializetools/crc32,
-  system, tables, serializetools/serialstring,
-  strutils
-
 import niledb/private/ffdb_header
+import system, tables
+import strutils
+import 
+  serializetools/serializebin, serializetools/crc32, serializetools/serialstring
 
 
 const
   FILEDB_DEFAULT_PAGESIZE = 8192
   FILEDB_DEFAULT_NUM_BUCKETS = 32
 
-# Need C-based printf
-#proc cprintf(formatstr: cstring) {.importc: "printf", varargs, header: "<stdio.h>".}
 
 # Need C-based free
 proc cfree(p: pointer): void {.importc: "free", header: "<stdlib.h>".}
@@ -44,6 +41,7 @@ proc `$`(a: FILEDB_DBT): string =
 type
   ConfDataStoreDB* = object
     filename:  string           ## database name
+    metadata:  string           ## metadata
     options:   FILEDB_OPENINFO  ## all open options
     dbh:       ptr FILEDB_DB    ## opened database handle
 
