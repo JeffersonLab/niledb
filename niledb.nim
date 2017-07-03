@@ -2,10 +2,9 @@
 ##     all configurations
 
 import niledb/private/ffdb_header
-import system, tables
-import strutils
+import tables
 import 
-  serializetools/serializebin, serializetools/crc32, serializetools/serialstring
+  serializetools/serializebin, serializetools/serialstring
 
 
 const
