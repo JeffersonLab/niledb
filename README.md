@@ -1,6 +1,4 @@
-# Niledb
-
-[![Build Status](https://travis-ci.org/JeffersonLab/niledb.svg?branch=master)](https://travis-ci.org/JeffersonLab/niledb)
+# Niledb [![Build Status](https://travis-ci.org/JeffersonLab/niledb.svg?branch=master)](https://travis-ci.org/JeffersonLab/niledb)
 
 A fast file-hash DB. The interface is Key/Value pair
 semantics. Storage of these pairs is into strings, and uses an
