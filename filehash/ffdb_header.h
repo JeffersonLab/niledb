@@ -40,6 +40,9 @@ typedef struct {
   unsigned int size;                   /* data length in bytes */
 } FILEDB_DBT;
 
+/* All configuration info */
+typedef void* FILEDB_ALL_CONFIG_INFO;
+
 /* Access method description structure. */
 typedef void* FILEDB_DB;
 
@@ -86,6 +89,14 @@ filedb_close(FILEDB_DB* dbh);
 
 
 /**
+ * Check whether this database is empty or not
+ *
+ */
+extern int
+filedb_is_db_empty(FILEDB_DB* dbhh);
+
+
+/**
  * Set a paticular configuration information
  * 
  * @param db pointer to underlying database
@@ -95,9 +106,8 @@ filedb_close(FILEDB_DB* dbh);
  */
 /*
 extern int
-filedb_set_config(FILEDB_DB* db, filedb_config_info_t* config);
+filedb_set_config(FILEDB_DB* db, FILEDB_CONFIG_INFO* config);
 */
-
 
 /**
  * Get a paticular configuration information
@@ -110,22 +120,32 @@ filedb_set_config(FILEDB_DB* db, filedb_config_info_t* config);
  */
 /*
 extern int
-filedb_get_config (const FILEDB_DB* db, unsigned int confignum,
-		   filedb_config_info_t* config);   
+filedb_get_config (const FILEDB_DB* db, unsigned int confignum, FILEDB_CONFIG_INFO* config);   
 */
 
 /**
  * Set all configurations
  *
  * @param db pointer to underlying database
- * @param configs all configuration information
+ * @param nbin number of configs
  *
  * @return 0 on success -1 on failure with a proper errno set
  */
-/*
 extern int
-filedb_set_all_configs(FILEDB_DB* db, filedb_all_config_info_t* configs);
-*/
+filedb_set_num_configs(FILEDB_DB* db, unsigned int nbin);
+
+
+/**
+ * Set all configurations
+ *
+ * @param db pointer to underlying database
+ * @param configs array of filenames 
+ * @param nbin number of configurations
+ *
+ * @return 0 on success -1 on failure with a proper errno set
+ */
+extern int
+filedb_set_all_configs(FILEDB_DB* db, const char** configs, unsigned int nbin);
 
 
 /**
@@ -139,18 +159,18 @@ filedb_set_all_configs(FILEDB_DB* db, filedb_all_config_info_t* configs);
  */
 /*
 extern int
-filedb_get_all_configs(const FILEDB_DB* db, filedb_all_config_info_t* configs);
+filedb_get_all_configs(const FILEDB_DB* db, FILEDB_ALL_CONFIG_INFO* configs);
 */
 
 /**
  * Get number of configurations information
  *
- * @param db pointer to underlying database
+ * @param dbhh pointer to underlying database
  *
  * @return number of configurations allocated
  */
 extern unsigned int
-filedb_num_configs(const FILEDB_DB* db);
+filedb_get_num_configs(const FILEDB_DB* dbhh);
 
 
 /**

@@ -1,6 +1,6 @@
 # Package
 version       = "1.0.0"
-author        = "Robert Edwards"
+author        = "Jie Chen and Robert Edwards"
 description   = "Key/Value storage into a fast file-hash"
 license       = "MIT"
 skipDirs      = @["tests","tmp"]

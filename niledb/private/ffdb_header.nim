@@ -40,6 +40,11 @@ type
     size* {.importc: "size".}: cuint ##  data length in bytes
   
 
+##  All configuration info
+
+type
+  FILEDB_ALL_CONFIG_INFO* = pointer
+
 ##  Access method description structure.
 
 type
@@ -80,6 +85,13 @@ proc filedb_dbopen*(fname: cstring; flags: cint; mode: cint; openinfo: pointer):
 proc filedb_close*(dbh: ptr FILEDB_DB): cint {.importc: "filedb_close",
     header: "ffdb_header.h".}
 ## *
+##  Check whether this database is empty or not
+## 
+## 
+
+proc filedb_is_db_empty*(dbhh: ptr FILEDB_DB): cint {.importc: "filedb_is_db_empty",
+    header: "ffdb_header.h".}
+## *
 ##  Set a paticular configuration information
 ##  
 ##  @param db pointer to underlying database
@@ -89,7 +101,7 @@ proc filedb_close*(dbh: ptr FILEDB_DB): cint {.importc: "filedb_close",
 ## 
 ## 
 ## extern int
-## filedb_set_config(FILEDB_DB* db, filedb_config_info_t* config);
+## filedb_set_config(FILEDB_DB* db, FILEDB_CONFIG_INFO* config);
 ## 
 ## *
 ##  Get a paticular configuration information
@@ -102,21 +114,31 @@ proc filedb_close*(dbh: ptr FILEDB_DB): cint {.importc: "filedb_close",
 ## 
 ## 
 ## extern int
-## filedb_get_config (const FILEDB_DB* db, unsigned int confignum,
-## 		   filedb_config_info_t* config);   
+## filedb_get_config (const FILEDB_DB* db, unsigned int confignum, FILEDB_CONFIG_INFO* config);   
 ## 
 ## *
 ##  Set all configurations
 ## 
 ##  @param db pointer to underlying database
-##  @param configs all configuration information
+##  @param nbin number of configs
 ## 
 ##  @return 0 on success -1 on failure with a proper errno set
 ## 
+
+proc filedb_set_num_configs*(db: ptr FILEDB_DB; nbin: cuint): cint {.
+    importc: "filedb_set_num_configs", header: "ffdb_header.h".}
+## *
+##  Set all configurations
 ## 
-## extern int
-## filedb_set_all_configs(FILEDB_DB* db, filedb_all_config_info_t* configs);
+##  @param db pointer to underlying database
+##  @param configs array of filenames 
+##  @param nbin number of configurations
 ## 
+##  @return 0 on success -1 on failure with a proper errno set
+## 
+
+proc filedb_set_all_configs*(db: ptr FILEDB_DB; configs: cstringArray; nbin: cuint): cint {.
+    importc: "filedb_set_all_configs", header: "ffdb_header.h".}
 ## *
 ##  Get all configurations
 ##  caller should free memory of configs->allconfigs
@@ -128,18 +150,18 @@ proc filedb_close*(dbh: ptr FILEDB_DB): cint {.importc: "filedb_close",
 ## 
 ## 
 ## extern int
-## filedb_get_all_configs(const FILEDB_DB* db, filedb_all_config_info_t* configs);
+## filedb_get_all_configs(const FILEDB_DB* db, FILEDB_ALL_CONFIG_INFO* configs);
 ## 
 ## *
 ##  Get number of configurations information
 ## 
-##  @param db pointer to underlying database
+##  @param dbhh pointer to underlying database
 ## 
 ##  @return number of configurations allocated
 ## 
 
-proc filedb_num_configs*(db: ptr FILEDB_DB): cuint {.importc: "filedb_num_configs",
-    header: "ffdb_header.h".}
+proc filedb_get_num_configs*(dbhh: ptr FILEDB_DB): cuint {.
+    importc: "filedb_get_num_configs", header: "ffdb_header.h".}
 ## *
 ##  Set user information for the database
 ## 

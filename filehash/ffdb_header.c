@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #include "ffdb_header.h"
 #include "ffdb_db.h"
@@ -122,6 +123,144 @@ void
 filedb_dbpanic(FILEDB_DB* dbp)
 {
   ffdb_dbpanic((FFDB_DB*)dbp);
+}
+
+
+/*
+ * Check whether this database is empty or not
+ *
+ */
+int filedb_is_db_empty(FILEDB_DB* dbhh)
+{
+  FFDB_DB* dbh = (FFDB_DB*)dbhh;
+  FFDB_DBT dbkey, dbdata;
+  ffdb_cursor_t* crp;
+  int  ret;
+    
+  /* create cursor */
+  ret = dbh->cursor(dbh, &crp, FFDB_KEY_CURSOR);
+  if (ret != 0) {
+    fprintf(stderr, "%s: cursor creation error", __func__);
+    exit(1);
+  }
+
+  /* get first thing from the database  */
+  dbkey.data = dbdata.data = 0;
+  dbkey.size = dbdata.size = 0;
+  ret = crp->get (crp, &dbkey, &dbdata, FFDB_NEXT);
+  if (ret == 0) {
+    free (dbkey.data);
+    free (dbdata.data);
+    crp->close(crp);
+    return 0;
+  }
+ 
+  if (ret != 0) {
+    fprintf(stderr, "%s: cursor first error", __func__);
+    exit(1);
+  }
+    
+  /* close cursor */
+  if (crp != NULL)
+    crp->close(crp);
+
+  return 1;
+}
+
+
+/*
+ * Set all configurations
+ *
+ * @param dbhh pointer to underlying database
+ * @param nbin number of configs
+ *
+ * @return 0 on success -1 on failure with a proper errno set
+ */
+int filedb_set_num_configs(FILEDB_DB* dbhh, unsigned int nbin)
+{
+  FFDB_DB* dbh  = (FFDB_DB*)dbhh;
+  ffdb_all_config_info_t allcfgs;
+  int i;
+  int ret;
+
+  allcfgs.numconfigs = nbin;
+  allcfgs.allconfigs = (ffdb_config_info_t*)malloc(nbin * sizeof(ffdb_config_info_t));
+  if (allcfgs.allconfigs == NULL) {
+    fprintf(stderr, "%s: cannot create space for config info\n", __func__);
+    exit(1);
+  }
+    
+  for (i = 0; i < nbin; i++) {
+    allcfgs.allconfigs[i].config = i;
+    allcfgs.allconfigs[i].index = i;
+    allcfgs.allconfigs[i].inserted = 0;
+    allcfgs.allconfigs[i].type = 0;
+    allcfgs.allconfigs[i].mtime = 0;
+    allcfgs.allconfigs[i].fname[0] = '\0';
+  }
+
+  /* set configuration information */
+  ret = ffdb_set_all_configs(dbh, &allcfgs);
+
+  /* cleanup */
+  free(allcfgs.allconfigs);
+
+  return ret;
+}
+
+
+/*
+ * Set all configurations
+ *
+ * @param db pointer to underlying database
+ * @param configs array of filenames 
+ * @param nbin number of configurations
+ *
+ * @return 0 on success -1 on failure with a proper errno set
+ */
+int filedb_set_all_configs(FILEDB_DB* dbhh, const char** configs, unsigned int nbin)
+{
+  FFDB_DB* dbh  = (FFDB_DB*)dbhh;
+  ffdb_all_config_info_t allcfgs;
+  int i;
+  int ret;
+
+  allcfgs.numconfigs = nbin;
+  allcfgs.allconfigs = (ffdb_config_info_t*)malloc(nbin * sizeof(ffdb_config_info_t));
+  if (allcfgs.allconfigs == NULL) {
+    fprintf(stderr, "%s: cannot create space for config info\n", __func__);
+    exit(1);
+  }
+    
+  for (int i = 0; i < nbin; i++) {
+    allcfgs.allconfigs[i].config = i;
+    allcfgs.allconfigs[i].index = i;
+    allcfgs.allconfigs[i].inserted = 0;
+    allcfgs.allconfigs[i].type = 0;
+    allcfgs.allconfigs[i].mtime = 0;
+    strncpy (allcfgs.allconfigs[i].fname, configs[i], _FFDB_MAX_FNAME);
+  }
+
+  /* set configuration information */
+  ret = ffdb_set_all_configs(dbh, &allcfgs);
+
+  /* cleanup */
+  free(allcfgs.allconfigs);
+
+  return ret;
+}
+
+
+/*
+ * Get number of configurations information
+ *
+ * @param dbhh pointer to underlying database
+ *
+ * @return number of configurations allocated
+ */
+unsigned int filedb_get_num_configs(const FILEDB_DB* dbhh)
+{
+  return ffdb_num_configs((FFDB_DB*)dbhh);
 }
 
 
