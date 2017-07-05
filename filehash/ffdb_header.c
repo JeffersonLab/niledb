@@ -232,7 +232,7 @@ int filedb_set_all_configs(FILEDB_DB* dbhh, const char** configs, unsigned int n
     exit(1);
   }
     
-  for (int i = 0; i < nbin; i++) {
+  for (i = 0; i < nbin; i++) {
     allcfgs.allconfigs[i].config = i;
     allcfgs.allconfigs[i].index = i;
     allcfgs.allconfigs[i].inserted = 0;
