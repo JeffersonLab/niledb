@@ -1,5 +1,18 @@
-##   Class for storing keys and corresponding vector of objects from
-##     all configurations
+## A fast file-hash DB. The interface is Key/Value pair
+## semantics. Storage of these pairs is into strings, and uses an
+## underlying `filehash` package implemented over a Berkeley Sleepy Cat
+## file-hash database. A single integer index is provided to allow the
+## grouping of the values from many DB's but with a single key.
+## 
+## The `filehash` DB provides page-level checksums and supports caching
+## of pages for fast retrievals and storage. Multi-threading reading is
+## supported. The DB scales well, an in production, has been used to hold
+## up to 80GB single files with O(100K) keys.
+## 
+## The [serializetools](https://github.com/JeffersonLab/serializetools) module provides 
+## tools for serialization and deserialization of keys and values to/from strings.
+## 
+
 
 import niledb/private/ffdb_header
 include niledb/private/niledb_internal
