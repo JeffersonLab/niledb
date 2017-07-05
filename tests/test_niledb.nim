@@ -355,6 +355,11 @@ suite "Tests of multi-configuration (Ensemble)DB functions":
     echo "mmeta= ", printBin(mmeta)
     require(meta == mmeta)
 
+    echo "Get number of configs"
+    let ncfgs = db.getMaxNumberConfigs()
+    echo "Number of configs= ", ncfgs
+    require(ncfgs == nbins)
+
     # Close
     require(db.close() == 0)
 
