@@ -143,7 +143,7 @@ suite "Tests of single configuration (S)DB functions":
       for t_slice in 9..10:
         for sl in 0..3:
           for sr in 0..3:
-            echo "t_slice= ", t_slice, " sl= ", sl, " sr= ", sr
+            #echo "t_slice= ", t_slice, " sl= ", sl, " sr= ", sr
             let key = KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
                                                  spin_l: cint(sl), spin_r: cint(sr), 
                                                  mass_label: SerialString(ll))
@@ -253,6 +253,7 @@ suite "Tests of single configuration (S)DB functions":
     let des_pairs = allPairs[KeyPropElementalOperator_t,float](db)
     echo "found num keys= ", des_pairs.len
     echo "here are all the keys: len= ", des_pairs.len, "  keys:\n"
+    echo "here are 10 of the keys"
     for k,v in des_pairs:
       echo "k= ", $k, "  v= ", $v
 
@@ -316,7 +317,7 @@ suite "Tests of multi-configuration (Ensemble)DB functions":
       for t_slice in 9..10:
         for sl in 0..1:
           for sr in 2..3:
-            echo "t_slice= ", t_slice, " sl= ", sl, " sr= ", sr
+            #echo "t_slice= ", t_slice, " sl= ", sl, " sr= ", sr
             keys.add(KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
                                                 spin_l: cint(sl), spin_r: cint(sr), 
                                                 mass_label: SerialString(ll)))
@@ -417,6 +418,7 @@ suite "Tests of multi-configuration (Ensemble)DB functions":
     let des_keys = allKeys[KeyPropElementalOperator_t](db)
     echo "found num all keys= ", des_keys.len
     echo "here is the first all key: len= ", des_keys.len, "  val= ", des_keys[0]
+    echo "here are 10 of the keys"
     #for i in 0..des_keys.len-1:
     for i in 0..10:
       echo "k[",i,"]= ", des_keys[i]
