@@ -234,6 +234,7 @@ suite "Tests of single configuration (S)DB functions":
     let des_keys = allKeys[KeyPropElementalOperator_t](db)
     echo "found num all keys= ", des_keys.len
     echo "here is the first all key: len= ", des_keys.len, "  val= ", des_keys[0]
+    echo "here are 10 of the keys"
     #for i in 0..des_keys.len-1:
     for i in 0..10:
       echo "k[",i,"]= ", des_keys[i]
@@ -327,17 +328,14 @@ suite "Tests of multi-configuration (Ensemble)DB functions":
     for key in items(keys):
       var val = newSeq[float](nbins)
 
-      echo "For key= ", key, " -  build val"
       for n in 0..nbins-1:
         val[n] = random(3.0)  # some arbitrary number
 
       # Insert
-      echo "Insert it"
       ret = db.insert(key,val)
       if ret != 0:
         echo "Ooops, ret= ", ret
         quit("Error in insertion")
-      echo "inserted: key= ", key, "  val= ", val
 
     # Close
     require(db.close() == 0)

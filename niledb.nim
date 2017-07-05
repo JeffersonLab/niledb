@@ -531,7 +531,6 @@ proc allPairs*[K,D](filedb: var AllConfDataStoreDB): Table[K,seq[D]] =
   # Loop over all the pairs and deserialize them
   var nn = 0
   for dd in mitems(all_pairs):
-    echo "nn= ", nn, "  dd.key= ", printBin(dd.key), "  dd.val= ", printBin(dd.val)
     if (dd.val.len mod filedb.nbins) != 0:
       quit("Get: data size not multiple of num configs")
 
@@ -541,7 +540,6 @@ proc allPairs*[K,D](filedb: var AllConfDataStoreDB): Table[K,seq[D]] =
       filedb.bytesize = bsize
 
     # Split up the val-string into nbin chunks
-    echo "create a data: filedb.nbins= ", filedb.nbins, "  bytesize= ", filedb.bytesize
     var data = newSeq[D](filedb.nbins)
 
     for n in 0..filedb.nbins-1:
