@@ -1,6 +1,7 @@
 nimcache
 */nimcache
 filehash/libfilehash.a
+tests/boo.edb
 tests/foo.sdb
 tests/prop.sdb
 tests/test_niledb
