@@ -20,6 +20,12 @@ import tables, os
 import 
   serializetools/serializebin, serializetools/serialstring
 
+from strutils import strip
+
+{.passC: "-I" & strip(staticExec("nimble path niledb")) & "/filehash" .}
+{.passL: strip(staticExec("nimble path niledb")) & "/filehash/libfilehash.a" .}
+
+
 
 ## Main type
 type
