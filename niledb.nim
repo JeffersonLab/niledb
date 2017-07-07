@@ -20,11 +20,17 @@ import tables, os
 import 
   serializetools/serializebin, serializetools/serialstring
 
+# Pass these in at the top level, thus getting easy access to the base path
+# It would be cleaner to push them into ffdb_header since that is where the
+# "C" calls are invoked
+# Is not there a cleaner way to get these paths at compile time?
 from strutils import strip
 
-{.passC: "-I" & strip(staticExec("nimble path niledb")) & "/filehash" .}
-{.passL: strip(staticExec("nimble path niledb")) & "/filehash/libfilehash.a" .}
+#{.passC: "-I" & strip(staticExec("nimble path niledb")) & "/filehash" .}
+#{.passL: strip(staticExec("nimble path niledb")) & "/filehash/libfilehash.a" .}
 
+{.passC: "-I" & strip(staticExec("pwd")) & "/filehash" .}
+{.passL: strip(staticExec("pwd")) & "/filehash/libfilehash.a" .}
 
 
 ## Main type
