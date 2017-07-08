@@ -149,16 +149,26 @@ proc splitDataString(dstr: string; nbins, bytesize: int; data: var seq[string]):
 ]#
 
 
+proc insertBinary(dbh: ptr FILEDB_DB; keyObj: var string; dataObj: var string): int =
+  ## Insert a pair of data and key into the database
+  ## @param key a key
+  ## @param data a user provided data
+  ##
+  ## @return 0 on successful write, -1 on failure with proper errno set
+  # create key
+  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
+          
+  # create DBt object
+  var dbdata = FILEDB_DBT(data: addr(dataObj[0]), size: cuint(dataObj.len))
+
+  # now it is time to insert
+  let ret = filedb_insert_data(dbh, addr(dbkey), addr(dbdata))
+  return int(ret)
 
 
-
-proc `[]`[K](dbh: ptr FILEDB_DB; key: K): string =
-  ## Get data for a given key
-  ## @param key user supplied key
-  ## @return data on success, otherwise abort
-  result = ""
-  var keyObj = serializeBinary(key)
-
+proc getBinary(dbh: ptr FILEDB_DB; keyObj: var string; data: var string): int =
+  ## Get binary `data` for a given binary `keyObj`
+  ## return 0 on success, otherwise the key not found
   # create key
   var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
           
@@ -169,10 +179,23 @@ proc `[]`[K](dbh: ptr FILEDB_DB; key: K): string =
   let ret = filedb_get_data(dbh, addr(dbkey), addr(dbdata))
   if ret == 0:
     # convert object into a string
-    result = $dbdata
+    data = $dbdata
     # I have to use free since I use malloc in c code
     cfree(dbdata.data)
-  else:
+
+  return int(ret)
+
+
+proc `[]`[K](dbh: ptr FILEDB_DB; key: K): string =
+  ## Get data for a given key
+  ## @param key user supplied key
+  ## @return data on success, otherwise abort
+  result = ""
+  var keyObj = serializeBinary(key)
+
+  # Get
+  let ret = getBinary(dbh, keyObj, result)
+  if ret != 0:
     quit("Error retrieving key = " & $key)
 
 

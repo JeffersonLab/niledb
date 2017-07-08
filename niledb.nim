@@ -23,7 +23,8 @@ import
 # Pass these in at the top level, thus getting easy access to the base path
 # It would be cleaner to push them into ffdb_header since that is where the
 # "C" calls are invoked
-# Is not there a cleaner way to get these paths at compile time?
+# Surely there is a cleaner way to get these paths at compile time? 
+# NOTE: instantationInfo only works within templates
 from strutils import strip
 
 #{.passC: "-I" & strip(staticExec("nimble path niledb")) & "/filehash" .}
@@ -138,17 +139,11 @@ proc insert*[K,D](filedb: var ConfDataStoreDB; key: K; data: D): int =
   ## @return 0 on successful write, -1 on failure with proper errno set
   var keyObj = serializeBinary(key)
 
-  # create key
-  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
-          
   # Convert data into binary form
   var dataObj = serializeBinary(data)
 
-  # create DBt object
-  var dbdata = FILEDB_DBT(data: addr(dataObj[0]), size: cuint(dataObj.len))
-
   # now it is time to insert
-  let ret = int(filedb_insert_data(filedb.dbh, addr(dbkey), addr(dbdata)))
+  let ret = insertBinary(filedb.dbh, keyObj, dataObj)
   return ret
 
 
@@ -160,24 +155,29 @@ proc insert*[K,D](filedb: var ConfDataStoreDB; kv: Table[K,D]): int =
     if ret != 0: return ret
 
 
+proc getBinary*(filedb: ConfDataStoreDB; key: string; data: var string): int =
+  ## Get `data` for a given `key`
+  ## return 0 on success, otherwise the key not found
+  # Convert key to a string
+  var keyObj: string
+  shallowCopy(keyObj, key)
+
+  # Output
+  return getBinary(filedb.dbh, keyObj, data)
+
+
 proc get*[K,D](filedb: ConfDataStoreDB; key: K; data: var D): int =
   ## Get `data` for a given `key`
   ## return 0 on success, otherwise the key not found
+  # Convert key to a string
   var keyObj = serializeBinary(key)
 
-  # create key
-  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
-          
-  # create and empty dbt data object
-  var dbdata: FILEDB_DBT
-
-  # now retrieve data from database
-  let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata))
+  # Output
+  var dataObj: string
+  let ret = getBinary(filedb.dbh, keyObj, dataObj)
   if ret == 0:
     # convert object into a string
-    data = deserializeBinary[D]($dbdata)
-    # I have to use free since I use malloc in c code
-    cfree(dbdata.data)
+    data = deserializeBinary[D](dataObj)
 
   return int(ret)
 
@@ -432,7 +432,6 @@ proc insert*[K,D](filedb: var AllConfDataStoreDB; key: K; data: seq[D]): int =
 
   # create key
   var keyObj = serializeBinary(key)
-  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
           
   # Data to insert
   var dstr: string = serializeBinary(data[0])
@@ -445,11 +444,9 @@ proc insert*[K,D](filedb: var AllConfDataStoreDB; key: K; data: seq[D]): int =
   for i in 1..filedb.nbins-1:
     dstr.add(serializeBinary(data[i]))
 
-  # create DBt object
-  var dbdata = FILEDB_DBT(data: addr(dstr[0]), size: cuint(dstr.len))
-
   # now it is time to insert
-  return int(filedb_insert_data(filedb.dbh, addr(dbkey), addr(dbdata)))
+  let ret = insertBinary(filedb.dbh, keyObj, dstr)
+  return ret
 
 
 proc insert*[K,D](filedb: var AllConfDataStoreDB; kv: Table[K,seq[D]]): int =
@@ -465,40 +462,42 @@ proc get*[K,D](filedb: var AllConfDataStoreDB; key: K; data: var seq[D]): int =
   ## ``key`` user supplied key
   ## ``data`` after the call data will be populated
   ## Return 0 on success, otherwise the key not found
+  # Create key
   var keyObj = serializeBinary(key)
 
-  # create key
-  var dbkey = FILEDB_DBT(data: addr(keyObj[0]), size: cuint(keyObj.len))
-          
-  # create and empty dbt data object
-  var dbdata: FILEDB_DBT
+  # Output
+  var dataObj: string
 
   # now retrieve data from database
-  let ret = filedb_get_data(filedb.dbh, addr(dbkey), addr(dbdata))
-  if ret != 0: return int(ret)
+  let ret = getBinary(filedb.dbh, keyObj, dataObj)
+  if ret != 0: return ret
 
   # Check
-  if (int(dbdata.size) mod filedb.nbins) != 0:
+  if (dataObj.len mod filedb.nbins) != 0:
     echo "Get: data size not multiple of num configs"
     return -1
 
   if filedb.bytesize == 0:
-    filedb.bytesize = int(dbdata.size) div filedb.nbins
+    filedb.bytesize = dataObj.len div filedb.nbins
 
-  if int(dbdata.size) != filedb.bytesize * filedb.nbins:
+  if dataObj.len != filedb.bytesize * filedb.nbins:
     echo "Get: bytesize of data not compatible with a previous read from this DB"
     return -1
 
   # Carve up this data into nbin chunks
   newSeq[D](data, filedb.nbins)
 
+  # work var
+  var dbd = newString(filedb.bytesize)
+
+  var nb = 0
   for n in 0..filedb.nbins-1:
-    # convert object into a string
-    var dbd = FILEDB_DBT(data: addr(asarray[byte](dbdata.data)[n*filedb.bytesize]), size: cuint(filedb.bytesize))
-    data[n] = deserializeBinary[D]($dbd)
+    # each substring is turned back into data
+    copyMem(addr(dbd[0]), addr(dataObj[nb]), filedb.bytesize)
+    data[n] = deserializeBinary[D](dbd)
+    nb += filedb.bytesize
 
   # I have to use free since I use malloc in c code
-  cfree(dbdata.data)
   return 0
 
 
