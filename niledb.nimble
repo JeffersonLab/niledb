@@ -6,7 +6,7 @@ license       = "MIT"
 skipDirs      = @["tests","tmp"]
 
 # Dependencies
-requires "nim >= 0.17.0", "serializetools >= 1.5.1"
+requires "nim >= 0.17.0", "serializetools >= 1.7.0"
 
 # Tasks
 task test, "Run the test suite":
