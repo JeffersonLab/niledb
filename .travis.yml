@@ -14,5 +14,3 @@ before_install:
   - nimble install -y
 script:
   - nimble test
-dist: "trusty"
-  
