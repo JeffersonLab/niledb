@@ -1367,10 +1367,6 @@ Class for storing keys and corresponding vector of objects from all configuratio
   </pre></dt>
 <dd>
 database name
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L39"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L39" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="AllConfDataStoreDB"><a name="AllConfDataStoreDB"></a><pre><span class="Identifier">AllConfDataStoreDB</span> <span class="Other">=</span> <span class="Keyword">object</span>
@@ -1384,10 +1380,6 @@ class="link-seesrc" target="_blank">Source</a>
   </pre></dt>
 <dd>
 number of configurations
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L261"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L261" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1398,10 +1390,6 @@ class="link-seesrc" target="_blank">Source</a>
 <dt id="newConfDataStoreDB"><a name="newConfDataStoreDB,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">newConfDataStoreDB</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Empty constructor for a single configurations data store
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L45"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L45" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setCacheSize"><a name="setCacheSize,ConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setCacheSize</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1409,10 +1397,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>How much data and keys should be kept in memory in bytes</p>
 <p>This should be called before the open is called @param max_cache_size number of bytes of data and keys should be kept in memory</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L51"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L51" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setCacheSizeMB"><a name="setCacheSizeMB,ConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setCacheSizeMB</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1420,10 +1404,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>How much data and keys should be kept in memory in megabytes</p>
 <p>This should be called before the open is called @param max_cache_size number of bytes of data and keys should be kept in memory</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L60"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L60" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setPageSize"><a name="setPageSize,ConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setPageSize</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1431,10 +1411,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Page size used when a new data based is created This only effects a new database</p>
 <p>@param pagesize the pagesize used in hash database. This value should be power of 2. The minimum value is 512 and maximum value is 262144</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L69"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L69" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setNumberBuckets"><a name="setNumberBuckets,ConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setNumberBuckets</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">num</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1443,10 +1419,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>This should be called before the open is called</p>
 <p>@param num the number of buckets should be used</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L79"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L79" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="enablePageMove"><a name="enablePageMove,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">enablePageMove</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1454,38 +1426,22 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Set whether to move pages when close to save disk space</p>
 <p>This only effective on writable database</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L88"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L88" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="disablePageMove"><a name="disablePageMove,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">disablePageMove</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L95"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L95" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setMaxUserInfoLen"><a name="setMaxUserInfoLen,ConfDataStoreDB,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setMaxUserInfoLen</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">len</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Set and get maximum user information length
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L99"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L99" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="getMaxUserInfoLen"><a name="getMaxUserInfoLen,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getMaxUserInfoLen</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L105"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L105" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="open"><a name="open,ConfDataStoreDB,string,cint,cint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">open</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">file</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">open_flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">mode</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma">
@@ -1494,19 +1450,11 @@ class="link-seesrc" target="_blank">Source</a>
 <p><tt class="docutils literal"><span class="pre">file</span></tt>: open filename holding all data and keys. <tt class="docutils literal"><span class="pre">open_flags</span></tt>: can be regular UNIX file open flags such as: O_RDONLY, O_RDWR, O_TRUNC <tt class="docutils literal"><span class="pre">mode</span></tt> regular unix file mode</p>
 <p>Return 0 on success, -1 on failure with proper errno set</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L110"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L110" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="close"><a name="close,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">close</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Close a database
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L129"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L129" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="insert"><a name="insert,ConfDataStoreDB,K,D"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">D</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
@@ -1514,102 +1462,58 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Insert a pair of data and key into the database @param key a key @param data a user provided data</p>
 <p>@return 0 on successful write, -1 on failure with proper errno set</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L134"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L134" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="insert"><a name="insert,ConfDataStoreDB,Table[K,D]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">kv</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 Insert a table of key/value pairs <cite>kv</cite> into the database
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L150"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L150" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="getBinary"><a name="getBinary,ConfDataStoreDB,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getBinary</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Get <cite>data</cite> for a given <cite>key</cite> return 0 on success, otherwise the key not found
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L158"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L158" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="get"><a name="get,ConfDataStoreDB,K,D"></a><pre><span class="Keyword">proc</span> <span class="Identifier">get</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">D</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 Get <cite>data</cite> for a given <cite>key</cite> return 0 on success, otherwise the key not found
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L169"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L169" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="[]"><a name="[],ConfDataStoreDB,K"></a><pre><span class="Keyword">proc</span> <span class="Identifier">`[]`</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 Get the representative string of data for a given <cite>key</cite>
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L185"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L185" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="exist"><a name="exist,ConfDataStoreDB,K"></a><pre><span class="Keyword">proc</span> <span class="Identifier">exist</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
 Does the <cite>key</cite> exist in the DB @param key a key object @return true if the answer is yes
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L190"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L190" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allBinaryKeys"><a name="allBinaryKeys,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allBinaryKeys</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Returns all available keys to user
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L197"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L197" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allBinaryPairs"><a name="allBinaryPairs,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allBinaryPairs</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Return a sequence of tuples of all available key/value pairs
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L202"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L202" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allKeys"><a name="allKeys,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allKeys</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span></pre></dt>
 <dd>
 Return all available keys to user
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L207"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L207" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allPairs"><a name="allPairs,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allPairs</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span></pre></dt>
 <dd>
 Return a table of all pairs of keys and values
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L212"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L212" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="storageName"><a name="storageName,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">storageName</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Return name of database associated with this Data store
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L230"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L230" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="insertUserdata"><a name="insertUserdata,ConfDataStoreDB,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insertUserdata</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">user_data</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1618,10 +1522,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Insert user data into the metadata database</p>
 <p>@param user_data user supplied data @return returns 0 if success, else failure</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L235"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L235" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="getUserdata"><a name="getUserdata,ConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getUserdata</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">ConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1629,28 +1529,16 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Get user user data from the metadata database</p>
 <p>@param user_data user supplied buffer to store user data @return returns user supplied buffer if success. Otherwise failure. </p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L243"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L243" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="newAllConfDataStoreDB"><a name="newAllConfDataStoreDB,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">newAllConfDataStoreDB</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Empty constructor for a multi-configuration data store
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L271"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L271" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="newAllConfDataStoreDB"><a name="newAllConfDataStoreDB,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">newAllConfDataStoreDB</span><span class="Other">(</span><span class="Identifier">num</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Constructor from some number of configurations
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L280"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L280" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setCacheSize"><a name="setCacheSize,AllConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setCacheSize</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1658,10 +1546,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>How much data and keys should be kept in memory in bytes</p>
 <p>This should be called before the open is called <tt class="docutils literal"><span class="pre">max_cache_size</span></tt> number of bytes of data and keys should be kept in memory</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L289"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L289" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setCacheSizeMB"><a name="setCacheSizeMB,AllConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setCacheSizeMB</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1669,10 +1553,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>How much data and keys should be kept in memory in megabytes</p>
 <p>This should be called before the open is called <tt class="docutils literal"><span class="pre">max_cache_size</span></tt> number of bytes of data and keys should be kept in memory</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L298"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L298" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setPageSize"><a name="setPageSize,AllConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setPageSize</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1680,10 +1560,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Page size used when a new data based is created This only effects a new database</p>
 <p><tt class="docutils literal"><span class="pre">pagesize</span></tt> the pagesize used in hash database. This value should be power of 2. The minimum value is 512 and maximum value is 262144</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L307"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L307" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setNumberBuckets"><a name="setNumberBuckets,AllConfDataStoreDB,cuint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setNumberBuckets</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">num</span><span class="Other">:</span> <span class="Identifier">cuint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1692,10 +1568,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>This should be called before the open is called</p>
 <p><tt class="docutils literal"><span class="pre">num</span></tt> the number of buckets should be used</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L317"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L317" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="enablePageMove"><a name="enablePageMove,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">enablePageMove</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1703,58 +1575,34 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Set whether to move pages when close to save disk space</p>
 <p>This only effective on writable database</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L326"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L326" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="disablePageMove"><a name="disablePageMove,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">disablePageMove</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L333"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L333" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setMaxUserInfoLen"><a name="setMaxUserInfoLen,AllConfDataStoreDB,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setMaxUserInfoLen</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">len</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Set and get maximum user information length
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L337"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L337" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="getMaxUserInfoLen"><a name="getMaxUserInfoLen,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getMaxUserInfoLen</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L343"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L343" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="setMaxNumberConfigs"><a name="setMaxNumberConfigs,AllConfDataStoreDB,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setMaxNumberConfigs</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">num</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Set and get maximum number of configurations
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L349"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L349" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="getMaxNumberConfigs"><a name="getMaxNumberConfigs,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getMaxNumberConfigs</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L355"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L355" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="open"><a name="open,AllConfDataStoreDB,string,cint,cint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">open</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">file</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">open_flags</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">mode</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma">
@@ -1764,101 +1612,57 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Open <tt class="docutils literal"><span class="pre">file</span></tt> filename holding all data and keys <tt class="docutils literal"><span class="pre">open_flags</span></tt>: can be regular UNIX file open flags such as: O_RDONLY, O_RDWR, O_TRUNC <tt class="docutils literal"><span class="pre">mode</span></tt> regular unix file mode</p>
 <p>Return 0 on success, -1 on failure with proper errno set</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L361"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L361" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="close"><a name="close,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">close</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Close a databaseZA
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L419"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L419" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="insert"><a name="insert,AllConfDataStoreDB,K,seq[D]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">D</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 Insert a pair of data and key into the database <tt class="docutils literal"><span class="pre">key</span></tt> a key <tt class="docutils literal"><span class="pre">data</span></tt> a user provided data Return 0 on successful write, -1 on failure with proper errno set
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L424"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L424" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="insert"><a name="insert,AllConfDataStoreDB,Table[K,seq[D]]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">kv</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">D</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 Insert a table of key/value pairs <tt class="docutils literal"><span class="pre">kv</span></tt> into the database
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L452"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L452" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="get"><a name="get,AllConfDataStoreDB,K,seq[D]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">get</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">D</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 Get data for a given key <tt class="docutils literal"><span class="pre">key</span></tt> user supplied key <tt class="docutils literal"><span class="pre">data</span></tt> after the call data will be populated Return 0 on success, otherwise the key not found
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L460"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L460" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="[]"><a name="[],AllConfDataStoreDB,K"></a><pre><span class="Keyword">proc</span> <span class="Identifier">`[]`</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 Get data for a given key @param key user supplied key @return data on success, otherwise abort
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L505"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L505" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="exist"><a name="exist,AllConfDataStoreDB,K"></a><pre><span class="Keyword">proc</span> <span class="Identifier">exist</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">K</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
 Does this key exist in the store @param key a key object @return true if the answer is yes
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L512"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L512" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allBinaryKeys"><a name="allBinaryKeys,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allBinaryKeys</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Return all available keys to user <tt class="docutils literal"><span class="pre">keys</span></tt> user suppled an empty vector which is populated by keys after this call.
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L520"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L520" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allBinaryPairs"><a name="allBinaryPairs,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allBinaryPairs</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
     <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">key</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Return all available key/value pairs to user <tt class="docutils literal"><span class="pre">keys</span></tt> user suppled an empty vector which is populated by keys after this call.
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L527"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L527" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allKeys"><a name="allKeys,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allKeys</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">]</span></pre></dt>
 <dd>
 Return all available keys to user <tt class="docutils literal"><span class="pre">keys</span></tt> user suppled an empty vector which is populated by keys after this call.
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L534"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L534" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="allPairs"><a name="allPairs,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allPairs</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">D</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">K</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">D</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
 <dd>
 Return all pairs of keys and values in a table NOTE: expects the data payload (the seq[D]) to be the same size for each configuration
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L542"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L542" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="storageName"><a name="storageName,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">storageName</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">noSideEffect</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1867,10 +1671,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Name of database associated with this Data store</p>
 <p>@return database name</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L587"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L587" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="insertUserdata"><a name="insertUserdata,AllConfDataStoreDB,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">insertUserdata</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">;</span> <span class="Identifier">user_data</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma">
@@ -1879,10 +1679,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Insert user data into the  metadata database</p>
 <p>@param user_data user supplied data @return returns 0 if success, else failure</p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L594"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L594" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <dt id="getUserdata"><a name="getUserdata,AllConfDataStoreDB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getUserdata</span><span class="Other">(</span><span class="Identifier">filedb</span><span class="Other">:</span> <span class="Identifier">AllConfDataStoreDB</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1890,10 +1686,6 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Get user user data from the metadata database</p>
 <p>@param user_data user supplied buffer to store user data @return returns user supplied buffer if success. Otherwise failure. </p>
 
-&nbsp;&nbsp;<a
-href="/tree/master/niledb.nim#L602"
-class="link-seesrc" target="_blank">Source</a>
-<a href="/edit/devel/niledb.nim#L602" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1906,7 +1698,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2017-07-08 13:09:18 UTC</small>
+        <small>Made with Nim. Generated: 2017-09-29 15:40:21 UTC</small>
       </div>
     </div>
   </div>
