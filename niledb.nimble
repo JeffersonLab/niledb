@@ -1,5 +1,5 @@
 # Package
-version       = "1.0.0"
+version       = "1.1.0"
 author        = "Jie Chen and Robert Edwards"
 description   = "Key/Value storage into a fast file-hash"
 license       = "MIT"

@@ -10,8 +10,7 @@ import random
 proc printBin(x:string): string =
   ## Print a binary string
   result = "0x"
-  for e in items(x):
-    result.add(toHex(e))
+  result.add(toHex(x))
 
 
 # Key type used for tests
