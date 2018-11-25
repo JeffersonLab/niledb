@@ -253,7 +253,7 @@ proc getUserdata*(filedb: ConfDataStoreDB): string =
 #------------------------------------------------------------------
 ## Main type support multi-configurations
 type
-  Filedb_all_config_info_t = object
+  Filedb_all_config_info_t* = object
     index:     int                            ## configuration number
     fname:     string                         ## filename of single-config
 

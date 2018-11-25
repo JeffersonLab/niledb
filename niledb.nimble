@@ -1,12 +1,13 @@
 # Package
-version       = "1.1.0"
+version       = "1.2.0"
 author        = "Jie Chen and Robert Edwards"
 description   = "Key/Value storage into a fast file-hash"
 license       = "MIT"
-skipDirs      = @["tests","tmp"]
+#skipDirs     = @["tests","tmp"]
+installDirs   = @["filehash"]
 
 # Dependencies
-requires "nim >= 0.17.0", "serializetools >= 1.7.0"
+requires "nim >= 0.19.0", "serializetools >= 1.12.0"
 
 # Tasks
 task test, "Run the test suite":

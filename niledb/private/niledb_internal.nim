@@ -15,9 +15,14 @@ const
 # Need C-based free
 proc cfree(p: pointer): void {.importc: "free", header: "<stdlib.h>".}
 
+#template asarray[T](p:pointer):auto =
+#  ## Convert pointers to C-style arrays of types.
+#  type A{.unchecked.} = array[0..0,T]
+#  cast[ptr A](p)
+
 template asarray[T](p:pointer):auto =
   ## Convert pointers to C-style arrays of types.
-  type A{.unchecked.} = array[0..0,T]
+  type A = UncheckedArray[T]
   cast[ptr A](p)
 
 
@@ -29,7 +34,7 @@ proc `$`(a: FILEDB_DBT): string =
   copyMem(addr(result[0]), a.data, sz)
 
 
-proc printBin(x:string): string =
+proc printBin*(x:string): string =
   ## Print a binary string
   result = "0x"
   result.add(toHex(x))
@@ -78,22 +83,22 @@ proc setNumberBuckets(options: var FILEDB_OPENINFO; num: cuint) =
   ## @param num the number of buckets should be used
   options.nbuckets = num
 
-proc enablePageMove(options: var FILEDB_OPENINFO) =
+proc enablePageMove*(options: var FILEDB_OPENINFO) =
   ## Set whether to move pages when close to save disk space
   ##
   ## This only effective on writable database
   options.rearrangepages = 1
 
-proc disablePageMove(options: var FILEDB_OPENINFO) =
+proc disablePageMove*(options: var FILEDB_OPENINFO) =
   options.rearrangepages = 0
 
 
-proc setMaxUserInfoLen(options: var FILEDB_OPENINFO; len: int) =
+proc setMaxUserInfoLen*(options: var FILEDB_OPENINFO; len: int) =
   ## Set and get maximum user information length
   options.userinfolen = cuint(len)
   
 
-proc setMaxNumberConfigs(options: var FILEDB_OPENINFO; num: cuint) =
+proc setMaxNumberConfigs*(options: var FILEDB_OPENINFO; num: cuint) =
   ## Set and get maximum number of configurations
   options.numconfigs = num
 

@@ -146,7 +146,7 @@ suite "Tests of single configuration (S)DB functions":
             let key = KeyPropElementalOperator_t(t_slice: cint(t_slice), t_source: 5, 
                                                  spin_l: cint(sl), spin_r: cint(sr), 
                                                  mass_label: SerialString(ll))
-            let val = random(3.0)  # some arbitrary number
+            let val = rand(3.0)  # some arbitrary number
             kv.add(key,val)
             if first:   # save some random key for later testing
               save_a_key = key
@@ -329,7 +329,7 @@ suite "Tests of multi-configuration (Ensemble)DB functions":
       var val = newSeq[float](nbins)
 
       for n in 0..nbins-1:
-        val[n] = random(3.0)  # some arbitrary number
+        val[n] = rand(3.0)  # some arbitrary number
 
       # Insert
       ret = db.insert(key,val)
