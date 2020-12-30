@@ -217,7 +217,7 @@ proc allPairs*[K,D](filedb: ConfDataStoreDB): Table[K,D] =
 
   # Loop over all the keys and deserialize them
   for i in 0..all_pairs.len-1:
-    result.add(deserializeBinary[K](all_pairs[i].key), deserializeBinary[D](all_pairs[i].val))
+    result[deserializeBinary[K](all_pairs[i].key)] = deserializeBinary[D](all_pairs[i].val)
 
 
 #[
@@ -573,7 +573,7 @@ proc allPairs*[K,D](filedb: var AllConfDataStoreDB): Table[K,seq[D]] =
       data[n] = deserializeBinary[D]($dbd)
 
     # Deserialize the key
-    result.add(deserializeBinary[K](dd.key), data)
+    result[deserializeBinary[K](dd.key)] = data
     inc(nn)
 
 

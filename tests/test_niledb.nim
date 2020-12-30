@@ -147,7 +147,7 @@ suite "Tests of single configuration (S)DB functions":
                                                  spin_l: cint(sl), spin_r: cint(sr), 
                                                  mass_label: SerialString(ll))
             let val = rand(3.0)  # some arbitrary number
-            kv.add(key,val)
+            kv[key] = val
             if first:   # save some random key for later testing
               save_a_key = key
               first = false
