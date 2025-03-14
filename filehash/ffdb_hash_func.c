@@ -97,9 +97,7 @@
 #define	DCHARHASH(h, c)	((h) = 0x63c63cd9*(h) + 0x9c39c33d + (c))
 
 unsigned int
-__ham_func2(key, len)
-     const void *key;
-     unsigned int len;
+__ham_func2(const void *key, unsigned int len)
 {
   const unsigned char *e, *k;
   unsigned int h;
@@ -128,9 +126,7 @@ __ham_func2(key, len)
  * PUBLIC: unsigned int __ham_func3 __P((DB *, const void *, unsigned int));
  */
 unsigned int
-__ham_func3(key, len)
-     const void *key;
-     unsigned int len;
+__ham_func3(const void *key, unsigned int len)
 {
   const unsigned char *k;
   unsigned int n, loop;
@@ -175,9 +171,7 @@ __ham_func3(key, len)
  * PUBLIC: unsigned int __ham_func4 __P((DB *, const void *, unsigned int));
  */
 unsigned int
-__ham_func4(key, len)
-     const void *key;
-     unsigned int len;
+__ham_func4(const void *key, unsigned int len)
 {
   const unsigned char *k;
   unsigned int h, loop;
@@ -232,9 +226,7 @@ __ham_func4(key, len)
  * PUBLIC: unsigned int __ham_func5 __P((DB *, const void *, unsigned int));
  */
 unsigned int
-__ham_func5(key, len)
-     const void *key;
-     unsigned int len;
+__ham_func5(const void *key, unsigned int len)
 {
   const unsigned char *k, *e;
   unsigned int h;
@@ -255,9 +247,7 @@ __ham_func5(key, len)
  * PUBLIC: unsigned int __ham_test __P((DB *, const void *, unsigned int));
  */
 unsigned int
-__ham_test(key, len)
-     const void *key;
-     unsigned int len;
+__ham_test(const void *key, unsigned int len)
 {
   return ((unsigned int)*(char *)key);
 }
